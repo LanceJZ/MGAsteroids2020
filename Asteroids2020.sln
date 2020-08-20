@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1231
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteroids2020", "Asteroids2020\Asteroids2020.csproj", "{353F6C96-C0F3-4F3D-B547-97F7C3C5D26E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{353F6C96-C0F3-4F3D-B547-97F7C3C5D26E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{353F6C96-C0F3-4F3D-B547-97F7C3C5D26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{353F6C96-C0F3-4F3D-B547-97F7C3C5D26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{353F6C96-C0F3-4F3D-B547-97F7C3C5D26E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F8D67753-7331-49FD-9E5D-70AC74991BC9}
+	EndGlobalSection
+EndGlobal
