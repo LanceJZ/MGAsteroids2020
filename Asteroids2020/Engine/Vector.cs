@@ -57,7 +57,6 @@ namespace Panther
                     pass.Apply();
                 }
 
-                //Effect.World = localMatrix;
                 Effect.View = _camera.View;
                 Effect.Projection = _camera.Projection;
                 Effect.EmissiveColor = EmissiveColor;
@@ -78,7 +77,7 @@ namespace Panther
 
         }
 
-        public float InitializePoints(Vector3[] pointPosition)
+        public float InitializePoints(Vector3[] pointPosition, Color color)
         {
             float radius = 0;
 
@@ -95,7 +94,7 @@ namespace Panther
 
                 for (int x = 0; x < pointPosition.Length; x++)
                 {
-                    pointList[x] = new VertexPositionColor(pointPosition[x], new Color(190, 170, 255));
+                    pointList[x] = new VertexPositionColor(pointPosition[x], color);
                 }
 
                 // Initialize the vertex buffer, allocating memory for each vertex.
@@ -129,6 +128,7 @@ namespace Panther
         {
             Effect = new BasicEffect(Core.Graphics);
             Effect.VertexColorEnabled = true;
+            Effect.TextureEnabled = false;
             Effect.View = theCamera.View;
             Effect.Projection = theCamera.Projection;
             Effect.World = localMatrix;
@@ -163,6 +163,7 @@ namespace Panther
                 fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
                 byte[] dataByte = new byte[1024];
                 UTF8Encoding bufferUTF8 = new UTF8Encoding(true);
+                fileLoaded = true;
 
                 while (fileStream.Read(dataByte, 0, dataByte.Length) > 0)
                 {
@@ -171,7 +172,6 @@ namespace Panther
 
                 Close();
 
-                fileLoaded = true;
                 string onAxis = "";
                 string number = "";
                 float X = 0;
@@ -260,6 +260,7 @@ namespace Panther
                 //Debug file not found.
                 System.Diagnostics.Debug.WriteLine("File " + fileName + " not found.");
                 vertRead.Add(Vector3.Zero);
+                vertRead.Add(Vector3.Zero);
             }
 
             Vector3[] verts = new Vector3[vertRead.Count];
@@ -279,6 +280,16 @@ namespace Panther
             Dispose();
         }
 
+        public void Transform()
+        {
+            // Calculate the mesh transformation by combining translation, rotation, and scaling
+            localMatrix = Matrix.CreateScale(Scale) *
+                Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z)
+                * Matrix.CreateTranslation(Position);
+            // Apply to Effect
+            Effect.World = localMatrix;
+        }
+
         void InitializeLineList()
         {
             // Initialize an array of indices of type short.
@@ -290,16 +301,6 @@ namespace Panther
                 lineListIndices[i * 2] = (short)(i);
                 lineListIndices[(i * 2) + 1] = (short)(i + 1);
             }
-        }
-
-        void Transform()
-        {
-            // Calculate the mesh transformation by combining translation, rotation, and scaling
-            localMatrix = Matrix.CreateScale(Scale) * 
-                Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z)
-                * Matrix.CreateTranslation(Position);
-            // Apply to Effect
-            Effect.World = localMatrix;
         }
 
         void Close()

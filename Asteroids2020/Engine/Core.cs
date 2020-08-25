@@ -17,8 +17,8 @@ namespace Panther
         static Game _game;
         static KeyboardState _keyStateOld;
         static KeyboardState _keyState;
-        public static uint SreenWidth;
-        public static uint ScreenHeight;
+        public static float ScreenWidth;
+        public static float ScreenHeight;
         #endregion
         #region Properties
         public static Random Rand { get => _randomNumberGenerator; }
@@ -398,7 +398,6 @@ namespace Panther
 
             return position;
         }
-        #endregion
         /// <summary>
         /// Circle collusion detection. Target circle will be compared to this class's.
         /// Will return true of they intersect. Only for use with 2D Z plane.
@@ -497,6 +496,6 @@ namespace Panther
             float amt = Core.RandomMinMax(speed * 0.15f, speed);
             return VelocityFromAngleZ(ang, amt);
         }
-
+        #endregion
     }
 }

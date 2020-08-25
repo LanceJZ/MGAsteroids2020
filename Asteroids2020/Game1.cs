@@ -33,11 +33,11 @@ namespace Asteroids2020
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 960;
             _graphics.ApplyChanges();
-            IsFixedTimeStep = false;
+            IsFixedTimeStep = true;
             Content.RootDirectory = "Content";
             // Positive Y is Up. Positive X is Right.
 
-            Helper.Initialize(this, _graphics);
+            Core.Initialize(this, _graphics);
 
             // Screen resolution is 1200 X 900.
             // Y positive is Up.
@@ -45,7 +45,7 @@ namespace Asteroids2020
             // Z positive is towards the camera when at rotation zero.
             // Rotation on object rotates CCW. Zero has front facing X positive. Pi/2 on Y faces Z negative.
             _camera = new Camera(this, new Vector3(0, 0, 50), new Vector3(0, MathHelper.Pi, 0),
-                GraphicsDevice.Viewport.AspectRatio, 1f, 10f);
+                GraphicsDevice.Viewport.AspectRatio, 1f, 60f);
 
             _FPSTimer = new Timer(this, 1);
             _game = new GameLogic(this, _camera);
@@ -66,8 +66,8 @@ namespace Asteroids2020
         protected override void Initialize()
         {
             // Setup lighting.
-            Helper.ScreenHeight = (uint)_graphics.PreferredBackBufferHeight;
-            Helper.SreenWidth = (uint)_graphics.PreferredBackBufferWidth;
+            Core.ScreenHeight = (uint)_graphics.PreferredBackBufferHeight;
+            Core.ScreenWidth = (uint)_graphics.PreferredBackBufferWidth;
 
             base.Initialize();
         }

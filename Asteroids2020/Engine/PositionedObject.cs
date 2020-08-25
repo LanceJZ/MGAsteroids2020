@@ -222,10 +222,7 @@ namespace Panther
         public override void Initialize()
         {
             base.Initialize();
-            BeginRun();
         }
-
-        public virtual void BeginRun() { }
         /// <summary>
         /// Allows the game component to be updated.
         /// </summary>
@@ -247,14 +244,19 @@ namespace Panther
 
             if (_isChild)
             {
-                if (DirectConnection)
-                {
-                    Position = ParentPO.Position;
-                    Rotation = ParentPO.Rotation;
-                }
+                UpdateChild();
             }
 
             base.Update(gameTime);
+        }
+
+        public void UpdateChild()
+        {
+            if (DirectConnection)
+            {
+                Position = ParentPO.Position;
+                Rotation = ParentPO.Rotation;
+            }
         }
 
         Vector3 WrapAngle(Vector3 angle)

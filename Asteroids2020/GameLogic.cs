@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Panther;
+using Asteroids2020.Entities;
 
 public enum GameState
 {
@@ -24,11 +25,16 @@ namespace Asteroids2020
         GameState _gameMode = GameState.MainMenu;
         KeyboardState _oldKeyState;
 
+        Player player;
+
         public GameState CurrentMode { get => _gameMode; }
+        public Player ThePlayer { get => player; }
 
         public GameLogic(Game game, Camera camera) : base(game)
         {
             _camera = camera;
+
+            player = new Player(game, camera, this);
 
             game.Components.Add(this);
         }
@@ -36,7 +42,8 @@ namespace Asteroids2020
         public override void Initialize()
         {
             base.Initialize();
-
+            Core.ScreenWidth = 27.532f;
+            Core.ScreenHeight = 20.737f;
         }
 
         public void BeginRun()
