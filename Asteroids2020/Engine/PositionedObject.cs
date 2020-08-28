@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Security.Cryptography.X509Certificates;
 #endregion
 
 namespace Panther
@@ -39,6 +40,7 @@ namespace Panther
         bool _inDebugMode;
         #endregion
         #region Properties
+
         public Vector3 WorldPosition
         {
             get
@@ -282,21 +284,21 @@ namespace Panther
             return angle;
         }
         /// <summary>
-        /// Adds child that is not directly connect.
+        /// Adds child that is directly connect.
         /// </summary>
         /// <param name="parrent">The parent to this class.</param>
         /// <param name="activeDependent">If this class is active when the parent is.</param>
         public virtual void AddAsChildOf(PositionedObject parrent, bool activeDependent)
         {
-            AddAsChildOf(parrent, activeDependent, false);
+            AddAsChildOf(parrent, activeDependent, true);
         }
         /// <summary>
-        /// Adds child that is active dependent and not directly connected.
+        /// Adds child that is not active dependent and directly connected.
         /// </summary>
         /// <param name="parrent">The Parent to this class.</param>
         public virtual void AddAsChildOf(PositionedObject parrent)
         {
-            AddAsChildOf(parrent, true, false);
+            AddAsChildOf(parrent, false, true);
         }
         /// <summary>
         /// Add PO class or base PO class from AModel or Sprite as child of this class.
@@ -360,8 +362,55 @@ namespace Panther
         {
             Game.Components.Remove(this);
         }
+        /// <summary>
+        /// Circle collusion detection. Target circle will be compared to this class's.
+        /// Will return true of they intersect. Only for use with 2D Z plane.
+        /// </summary>
+        /// <param name="target">Target Positioned Object.</param>
+        /// <returns></returns>
+        public bool CirclesIntersect(PositionedObject target)
+        {
+            if (!Enabled || !target.Enabled)
+                return false;
 
+            float distanceX = target.X - X;
+            float distanceY = target.Y - Y;
+            float radius = Radius + target.Radius;
 
+            if ((distanceX * distanceX) + (distanceY * distanceY) < radius * radius)
+                return true;
+
+            return false;
+        }
+        /// <summary>
+        /// Returns a float of the angle in radians to target, using only the X and Y.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns>float</returns>
+        public float AngleFromVectorsZ(Vector3 target)
+        {
+            return MathF.Atan2(target.Y - Y, target.X - X);
+        }
+
+        public bool OffScreenSide()
+        {
+            if (X > Core.ScreenWidth || X < -Core.ScreenWidth)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool OffScreenTopBottom()
+        {
+            if (Y > Core.ScreenHeight || Y < -Core.ScreenHeight)
+            {
+                return true;
+            }
+
+            return false;
+        }
         #endregion
     }
 }

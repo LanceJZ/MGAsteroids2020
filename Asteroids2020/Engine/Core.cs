@@ -16,7 +16,6 @@ namespace Panther
         static Random _randomNumberGenerator = new Random(DateTime.Now.Millisecond);
         static Game _game;
         static KeyboardState _keyStateOld;
-        static KeyboardState _keyState;
         public static float ScreenWidth;
         public static float ScreenHeight;
         #endregion
@@ -111,9 +110,7 @@ namespace Panther
 
         public static bool KeyDown(Keys key)
         {
-            _keyState = Keyboard.GetState();
-
-            if (_keyState.IsKeyDown(key))
+            if (Keyboard.GetState().IsKeyDown(key))
             {
                 return true;
             }
@@ -123,16 +120,22 @@ namespace Panther
 
         public static bool KeyPressed(Keys key)
         {
-            _keyState = Keyboard.GetState();
+            KeyboardState keyState = Keyboard.GetState();
 
-            if (_keyState != _keyStateOld)
+            if (keyState != _keyStateOld)
             {
-                if (_keyState.IsKeyDown(key))
+                if (keyState.IsKeyDown(key))
+                {
                     return true;
+                }
             }
 
-            _keyStateOld = _keyState;
             return false;
+        }
+
+        public static void UpdateKeys()
+        {
+            _keyStateOld = Keyboard.GetState();
         }
 
 
@@ -150,9 +153,9 @@ namespace Panther
         /// <returns>Vector3 velocity</returns>
         public static Vector3 VelocityFromAngle(Vector2 angle, float magnitude)
         {
-            return new Vector3((float)Math.Cos(angle.X) * magnitude,
-                (float)Math.Sin(angle.Y) * magnitude,
-                -(float)(Math.Sin(angle.X) * magnitude));
+            return new Vector3(MathF.Cos(angle.X) * magnitude,
+                MathF.Sin(angle.Y) * magnitude,
+                -(MathF.Sin(angle.X) * magnitude));
         }
         /// <summary>
         /// Returns a Vector3 direction of travel from angle and magnitude.
@@ -163,8 +166,8 @@ namespace Panther
         /// <returns>Vector3</returns>
         public static Vector3 VelocityFromAngleY(float rotation, float magnitude)
         {
-            return new Vector3((float)Math.Cos(rotation) * magnitude,
-                0, -((float)Math.Sin(rotation) * magnitude));
+            return new Vector3(MathF.Cos(rotation) * magnitude,
+                0, -(MathF.Sin(rotation) * magnitude));
         }
         /// <summary>
         /// Returns a Vector3 direction of travel from angle and magnitude.
@@ -176,8 +179,8 @@ namespace Panther
         /// <returns>Vector3</returns>
         public static Vector3 VelocityFromAngleZ(float rotation, float magnitude)
         {
-            return new Vector3((float)Math.Cos(rotation) * magnitude,
-                (float)Math.Sin(rotation) * magnitude, 0);
+            return new Vector3(MathF.Cos(rotation) * magnitude,
+                MathF.Sin(rotation) * magnitude, 0);
         }
         /// <summary>
         /// Returns a Vector3 direction of travel from random angle and set magnitude. Y is ignored.
@@ -187,8 +190,8 @@ namespace Panther
         public static Vector3 VelocityFromAngleY(float magnitude)
         {
             float angle = RandomRadian();
-            return new Vector3((float)Math.Cos(angle) * magnitude, 0,
-                -((float)Math.Sin(angle) * magnitude));
+            return new Vector3(MathF.Cos(angle) * magnitude, 0,
+                -(MathF.Sin(angle) * magnitude));
         }
         /// <summary>
         /// Returns a Vector3 direction of travel from random angle and set magnitude. Z is ignored.
@@ -198,7 +201,7 @@ namespace Panther
         public static Vector3 VelocityFromAngleZ(float magnitude)
         {
             float angle = RandomRadian();
-            return new Vector3((float)Math.Cos(angle) * magnitude, (float)Math.Sin(angle) * magnitude, 0);
+            return new Vector3(MathF.Cos(angle) * magnitude, MathF.Sin(angle) * magnitude, 0);
         }
 
         public static Vector2 RandomEdge()
@@ -222,7 +225,7 @@ namespace Panther
             float targetLessFacing = targetAngle - facingAngle;
             float facingLessTarget = facingAngle - targetAngle;
 
-            if (Math.Abs(targetLessFacing) > MathHelper.Pi)
+            if (MathF.Abs(targetLessFacing) > MathHelper.Pi)
             {
                 if (facingAngle > targetAngle)
                 {
@@ -253,7 +256,7 @@ namespace Panther
             float targetLessFacing = targetAngle - facingAngle;
             float facingLessTarget = facingAngle - targetAngle;
 
-            if (Math.Abs(targetLessFacing) > MathHelper.Pi)
+            if (MathF.Abs(targetLessFacing) > MathHelper.Pi)
             {
                 if (facingAngle > targetAngle)
                 {
@@ -288,7 +291,7 @@ namespace Panther
             float targetLessFacing = targetAngle - facingAngle;
             float facingLessTarget = facingAngle - targetAngle;
 
-            if (Math.Abs(targetLessFacing) > MathHelper.Pi)
+            if (MathF.Abs(targetLessFacing) > MathHelper.Pi)
             {
                 if (facingAngle > targetAngle)
                 {
@@ -398,6 +401,7 @@ namespace Panther
 
             return position;
         }
+        #endregion
         /// <summary>
         /// Circle collusion detection. Target circle will be compared to this class's.
         /// Will return true of they intersect. Only for use with 2D Z plane.
@@ -418,16 +422,20 @@ namespace Panther
             return false;
         }
         /// <summary>
-        /// Circle collusion detection. Target circle will be compared to this class's.
+        /// Circle collusion detection. Target circle will be compared to origin circle.
         /// Will return true of they intersect. Only for use with 2D Z plane.
         /// </summary>
-        /// <param name="Target">Target Positioned Object.</param>
-        /// <returns></returns>
-        public static bool CirclesIntersect(PositionedObject origin, PositionedObject Target)
+        /// <param name="target">Target Positioned Object.</param>
+        /// <param name="origin">Origin Positioned Object.</param>
+        /// <returns>bool</returns>
+        public static bool CirclesIntersect(PositionedObject origin, PositionedObject target)
         {
-            float distanceX = Target.Position.X - origin.Position.X;
-            float distanceY = Target.Position.Y - origin.Position.Y;
-            float radius = origin.Radius + Target.Radius;
+            if (!origin.Enabled || !target.Enabled)
+                return false;
+
+            float distanceX = target.Position.X - origin.Position.X;
+            float distanceY = target.Position.Y - origin.Position.Y;
+            float radius = origin.Radius + target.Radius;
 
             if ((distanceX * distanceX) + (distanceY * distanceY) < radius * radius)
                 return true;
@@ -472,7 +480,7 @@ namespace Panther
         /// <returns>Float</returns>
         public static float AngleFromVectorsY(Vector3 origin, Vector3 target)
         {
-            return (float)(Math.Atan2(-target.Z - -origin.Z, target.X - origin.X));
+            return (MathF.Atan2(-target.Z - -origin.Z, target.X - origin.X));
         }
         /// <summary>
         /// Returns a float of the angle in radians to target, using only the X and Y.
@@ -482,7 +490,7 @@ namespace Panther
         /// <returns></returns>
         public static float AngleFromVectorsZ(Vector3 origin, Vector3 target)
         {
-            return (float)(Math.Atan2(target.Y - origin.Y, target.X - origin.X));
+            return (MathF.Atan2(target.Y - origin.Y, target.X - origin.X));
         }
 
         public static float RandomRadian()
@@ -496,6 +504,6 @@ namespace Panther
             float amt = Core.RandomMinMax(speed * 0.15f, speed);
             return VelocityFromAngleZ(ang, amt);
         }
-        #endregion
+
     }
 }

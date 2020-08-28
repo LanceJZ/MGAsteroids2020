@@ -5,7 +5,7 @@ using Panther;
 
 namespace Asteroids2020
 {
-    public class Game1 : Game
+    public class Main : Game
     {
         GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
@@ -20,7 +20,7 @@ namespace Asteroids2020
         KeyboardState _oldKeyState;
         bool _pauseGame = false;
 
-        public Game1()
+        public Main()
         {
             _graphics = new GraphicsDeviceManager(this);
             _graphics.IsFullScreen = false;
@@ -68,6 +68,8 @@ namespace Asteroids2020
             // Setup lighting.
             Core.ScreenHeight = (uint)_graphics.PreferredBackBufferHeight;
             Core.ScreenWidth = (uint)_graphics.PreferredBackBufferWidth;
+            // Create a new SpriteBatch, which can be used to draw textures.
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             base.Initialize();
         }
@@ -78,8 +80,8 @@ namespace Asteroids2020
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            base.LoadContent();
+            _game.LoadContent();
         }
 
         /// <summary>
@@ -108,18 +110,16 @@ namespace Asteroids2020
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            KeyboardState KBS = Keyboard.GetState();
-
-            if (_game.CurrentMode == GameState.InPlay)
+            if (_game.CurrentMode != GameState.Pause)
             {
-                if (!_oldKeyState.IsKeyDown(Keys.P) && KBS.IsKeyDown(Keys.P))
-                    _pauseGame = !_pauseGame;
+                base.Update(gameTime);
+            }
+            else
+            {
+                _game.GetKeys();
             }
 
-            _oldKeyState = Keyboard.GetState();
-
-            if (!_pauseGame)
-                base.Update(gameTime);
+            Core.UpdateKeys();
 
             _FPSFrames++;
 
