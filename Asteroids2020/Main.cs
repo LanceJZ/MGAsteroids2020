@@ -7,18 +7,17 @@ namespace Asteroids2020
 {
     public class Main : Game
     {
+        public static GameLogic instance;
         GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
         GameLogic _game;
         Camera _camera;
 
         Timer _FPSTimer;
+        Timer _FPSDesplayTimer;
         float _FPSFrames = 0;
         float _FPSTotal = 0;
         float _FPSCount = 0;
-
-        KeyboardState _oldKeyState;
-        bool _pauseGame = false;
 
         public Main()
         {
@@ -36,8 +35,10 @@ namespace Asteroids2020
             IsFixedTimeStep = true;
             Content.RootDirectory = "Content";
             // Positive Y is Up. Positive X is Right.
+            // Create a new SpriteBatch, which can be used to draw textures.
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Core.Initialize(this, _graphics);
+            Core.Initialize(this, _graphics, _spriteBatch);
 
             // Screen resolution is 1200 X 900.
             // Y positive is Up.
@@ -48,6 +49,7 @@ namespace Asteroids2020
                 GraphicsDevice.Viewport.AspectRatio, 1f, 60f);
 
             _FPSTimer = new Timer(this, 1);
+            _FPSDesplayTimer = new Timer(this, 30);
             _game = new GameLogic(this, _camera);
         }
 
@@ -65,6 +67,11 @@ namespace Asteroids2020
         /// </summary>
         protected override void Initialize()
         {
+            if (instance == null)
+            {
+                instance = _game;
+            }
+
             // Setup lighting.
             Core.ScreenHeight = (uint)_graphics.PreferredBackBufferHeight;
             Core.ScreenWidth = (uint)_graphics.PreferredBackBufferWidth;
@@ -90,7 +97,8 @@ namespace Asteroids2020
         /// </summary>
         protected override void UnloadContent()
         {
-
+            base.UnloadContent();
+            _game.UnloadContent();
         }
 
         protected override void BeginRun()
@@ -129,7 +137,14 @@ namespace Asteroids2020
                 _FPSTotal += _FPSFrames;
                 _FPSCount++;
                 float average = _FPSTotal / _FPSCount;
-                System.Diagnostics.Debug.WriteLine("FPS " + _FPSFrames.ToString() + " Average " + average.ToString());
+
+                if (_FPSDesplayTimer.Elapsed)
+                {
+                    _FPSDesplayTimer.Reset();
+                    System.Diagnostics.Debug.WriteLine("FPS " + _FPSFrames.ToString() + " Average " +
+                        average.ToString());
+                }
+
                 _FPSFrames = 0;
             }
         }
@@ -141,9 +156,8 @@ namespace Asteroids2020
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(new Color(0.05f, 0, 0.1f));
-            //GraphicsDevice.Clear(Color.Red);
-
             base.Draw(gameTime);
+            _game.Draw();
         }
     }
 }

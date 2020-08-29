@@ -20,7 +20,6 @@ namespace Asteroids2020.Entities
         float largeRadius;
         float speed =  2.666f;
         float shotSpeed = 16.666f;
-        public int points;
         public GameLogic.UFOType type;
         #endregion
         #region Properties
@@ -116,31 +115,35 @@ namespace Asteroids2020.Entities
 
         public void Destroyed()
         {
-            GameLogic.instance.TheUFO.ResetTimer();
+            Main.instance.TheUFO.ResetTimer();
             Enabled = false;
         }
         #endregion
         #region Private Methods
         void CheckCollusion()
         {
-            Player player = GameLogic.instance.ThePlayer;
+            Player player = Main.instance.ThePlayer;
 
             foreach (Shot shot in player.Shots)
             {
-                if (PO.CirclesIntersect(shot.PO) && shot.Enabled)
+                if (PO.CirclesIntersect(shot.PO))
                 {
                     Destroyed();
+                    PlayerScored();
                 }
             }
 
             if (PO.CirclesIntersect(player.PO))
             {
                 Destroyed();
+                PlayerScored();
+                Main.instance.PlayerHit();
             }
 
             if (shot.PO.CirclesIntersect(player.PO))
             {
                 shot.Enabled = false;
+                Main.instance.PlayerHit();
             }
         }
 
@@ -199,15 +202,32 @@ namespace Asteroids2020.Entities
 
         float AimedFire()
         {
-            float percentChance = 0.25f - (GameLogic.instance.Score * 0.00001f);
+            float percentChance = 0.25f - (Main.instance.Score * 0.00001f);
 
             if (percentChance < 0)
             {
                 percentChance = 0;
             }
 
-            return PO.AngleFromVectorsZ(GameLogic.instance.ThePlayer.Position) +
+            return PO.AngleFromVectorsZ(Main.instance.ThePlayer.Position) +
                 Core.RandomMinMax(-percentChance, percentChance);
+        }
+
+        void PlayerScored()
+        {
+            uint points = 0;
+
+            switch(type)
+            {
+                case GameLogic.UFOType.Large:
+                    points = 200;
+                    break;
+                case GameLogic.UFOType.Small:
+                    points = 1000;
+                    break;
+            }
+
+            Main.instance.PlayerScore(points);
         }
         #endregion
     }

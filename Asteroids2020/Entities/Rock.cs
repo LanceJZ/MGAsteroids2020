@@ -14,7 +14,6 @@ namespace Asteroids2020.Entities
         #region Fields
         Camera CameraRef;
         public GameLogic.RockSize size = new GameLogic.RockSize();
-        public int points;
         public float baseRadius;
         #endregion
         #region Properties
@@ -62,21 +61,24 @@ namespace Asteroids2020.Entities
         #region Private Methods
         void CheckCollusion()
         {
-            Player player = GameLogic.instance.ThePlayer;
-            UFO ufo = GameLogic.instance.TheUFO.TheUFO;
+            Player player = Main.instance.ThePlayer;
+            UFO ufo = Main.instance.TheUFO.TheUFO;
 
             foreach (Shot shot in player.Shots)
             {
-                if (PO.CirclesIntersect(shot.PO) && shot.Enabled)
+                if (PO.CirclesIntersect(shot.PO))
                 {
                     shot.Enabled = false;
                     Destroyed();
-                } 
+                    PlayerScored();
+                }
             }
 
-            if (PO.CirclesIntersect(player.PO) && player.Enabled)
+            if (PO.CirclesIntersect(player.PO))
             {
                 Destroyed();
+                PlayerScored();
+                Main.instance.PlayerHit();
             }
 
             if (PO.CirclesIntersect(ufo.PO))
@@ -92,10 +94,30 @@ namespace Asteroids2020.Entities
             }
         }
 
+        void PlayerScored()
+        {
+            uint points = 0;
+
+            switch(size)
+            {
+                case GameLogic.RockSize.Large:
+                    points = 20;
+                    break;
+                case GameLogic.RockSize.Medium:
+                    points = 50;
+                    break;
+                case GameLogic.RockSize.Small:
+                    points = 100;
+                    break;
+            }
+
+            Main.instance.PlayerScore(points);
+        }
+
         void Destroyed()
         {
             Enabled = false;
-            GameLogic.instance.TheRocks.RockDistroyed(this);
+            Main.instance.TheRocks.RockDistroyed(this);
         }
         #endregion
     }

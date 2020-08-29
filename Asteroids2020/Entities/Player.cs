@@ -23,6 +23,7 @@ namespace Asteroids2020.Entities
         #endregion
         #region Properties
         public List<Shot> Shots { get => shots; }
+        public Color Color { get => color; }
         #endregion
         #region Constructor
         public Player(Game game, Camera camera) : base(game, camera)
@@ -54,6 +55,8 @@ namespace Asteroids2020.Entities
         public void BeginRun()
         {
             flame.PO.AddAsChildOf(PO);
+            flame.Enabled = false;
+            Enabled = false;
         }
         #endregion
         #region Update
@@ -69,7 +72,14 @@ namespace Asteroids2020.Entities
         }
         #endregion
         #region Public Methods
-
+        public new void Hit()
+        {
+            flame.Enabled = false;
+            Position = Vector3.Zero;
+            Velocity = Vector3.Zero;
+            Acceleration = Vector3.Zero;
+            Enabled = false;
+        }
         #endregion
         #region Private Methods
         void GetKeys()

@@ -67,28 +67,31 @@ namespace Asteroids2020
         #region Public Methods
         public void ResetTimer()
         {
-            spawnTimer.Reset(Core.RandomMinMax(10 - GameLogic.instance.Wave * 0.1f,
-                10.15f + GameLogic.instance.Wave * 0.1f));
+            spawnTimer.Reset(Core.RandomMinMax(10 - Main.instance.Wave * 0.1f,
+                10.15f + Main.instance.Wave * 0.1f));
+        }
+        public void Reset()
+        {
+            theUFO.Enabled = false;
+            ResetTimer();
         }
         #endregion
         #region Private Methods
         void Spawn()
         {
-            float spawnPercent = (float)(Math.Pow(0.915, spawnCount / (GameLogic.instance.Wave + 1)) * 100);
+            float spawnPercent = (float)(Math.Pow(0.915, spawnCount / (Main.instance.Wave + 1)) * 100);
             Vector3 position = new Vector3();
 
-            if (Core.RandomMinMax(0, 99) < spawnPercent - GameLogic.instance.Score / 400)
+            if (Core.RandomMinMax(0, 99) < spawnPercent - Main.instance.Score / 400)
             {
                 theUFO.type = GameLogic.UFOType.Large;
                 theUFO.Scale = 1;
-                theUFO.points = 200;
                 theUFO.PO.Radius = theUFO.LargeRadius;
             }
             else
             {
                 theUFO.type = GameLogic.UFOType.Small;
                 theUFO.Scale = 0.5f;
-                theUFO.points = 1000;
                 theUFO.PO.Radius = theUFO.LargeRadius / 2;
             }
 

@@ -13,6 +13,27 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Hyperspace16.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Hyperspace16.spritefont
+
+#begin Hyperspace20.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Hyperspace20.spritefont
+
+#begin Hyperspace8.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Hyperspace8.spritefont
+
 #begin Models/Core/0.obj
 /importer:FbxImporter
 /processor:ModelProcessor

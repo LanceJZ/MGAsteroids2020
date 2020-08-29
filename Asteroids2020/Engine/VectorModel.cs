@@ -16,10 +16,13 @@ namespace Panther
         FileIO modelFile;
         Matrix localMatrix;
         VertexPositionColor[] pointList;
+        Vector3[] vertexArray;
         VertexBuffer vertexBuffer;
         RasterizerState rasterizerState;
         short[] lineListIndices;
         public float Alpha = 1;
+
+        public Vector3[] VertexArray { get => vertexArray; }
 
         public VectorModel (Game game, Camera camera): base(game, camera)
         {
@@ -116,11 +119,12 @@ namespace Panther
             return InitializePoints(modelFile.ReadVectorModelFile(name), Color.White);
         }
 
-        public float InitializePoints(Vector3[] pointPosition, Color color)
+        public float InitializePoints(Vector3[] pointPositions, Color color)
         {
+            vertexArray = pointPositions;
             float radius = 0;
 
-            if (pointPosition != null)
+            if (pointPositions != null)
             {
                 VertexDeclaration vertexDeclaration = new VertexDeclaration(new VertexElement[]
                     {
@@ -129,16 +133,16 @@ namespace Panther
                     }
                 );
 
-                pointList = new VertexPositionColor[pointPosition.Length];
+                pointList = new VertexPositionColor[pointPositions.Length];
 
-                for (int x = 0; x < pointPosition.Length; x++)
+                for (int x = 0; x < pointPositions.Length; x++)
                 {
-                    pointList[x] = new VertexPositionColor(pointPosition[x], color);
+                    pointList[x] = new VertexPositionColor(pointPositions[x], color);
                 }
 
                 // Initialize the vertex buffer, allocating memory for each vertex.
                 vertexBuffer = new VertexBuffer(Core.GraphicsDM.GraphicsDevice, vertexDeclaration,
-                    pointPosition.Length, BufferUsage.None);
+                    pointPositions.Length, BufferUsage.None);
 
                 // Set the vertex buffer data to the array of vertices.
                 vertexBuffer.SetData<VertexPositionColor>(pointList);
@@ -147,13 +151,13 @@ namespace Panther
                 Transform();
             }
 
-            for (int i = 0; i < pointPosition.Length; i++)
+            for (int i = 0; i < pointPositions.Length; i++)
             {
-                if (Math.Abs(pointPosition[i].X) > radius)
-                    radius = Math.Abs(pointPosition[i].X);
+                if (Math.Abs(pointPositions[i].X) > radius)
+                    radius = Math.Abs(pointPositions[i].X);
 
-                if (Math.Abs(pointPosition[i].Y) > radius)
-                    radius = Math.Abs(pointPosition[i].Y);
+                if (Math.Abs(pointPositions[i].Y) > radius)
+                    radius = Math.Abs(pointPositions[i].Y);
             }
 
             return radius;

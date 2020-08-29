@@ -23,7 +23,7 @@ namespace Asteroids2020
         RockModel[] rocksModels = new RockModel[4];
         List<Rock> rocksList = new List<Rock>();
         Color color = new Color(150, 150, 255);
-        int largeRockAmount = 2;
+        int largeRockAmount;
         #endregion
         #region Properties
         public List<Rock> Rocks { get => rocksList; }
@@ -55,7 +55,7 @@ namespace Asteroids2020
 
         public void BeginRun()
         {
-            NewWaveSpawn();
+            Reset();
         }
         #endregion
         #region Update
@@ -95,6 +95,17 @@ namespace Asteroids2020
                     break;
             }
         }
+
+        public void Reset()
+        {
+            foreach(Rock rock in rocksList)
+            {
+                rock.Enabled = false;
+            }
+
+            largeRockAmount = 2;
+            NewWaveSpawn();
+        }
         #endregion
         #region Private Methods
         void SpawnRocks(Vector3 position, GameLogic.RockSize rockSize, int count)
@@ -117,7 +128,7 @@ namespace Asteroids2020
                 if (spawnNewRock)
                 {
                     rocksList.Add(new Rock(Game, CameraRef));
-                    rocksList[rock].baseRadius =
+                    rocksList.Last().baseRadius =
                         rocksList[rock].InitializePoints(rocksModels[Core.RandomMinMax(0, 3)].rock, color);
                 }
 
@@ -149,7 +160,6 @@ namespace Asteroids2020
         {
             rocksList[rock].Scale = scale;
             rocksList[rock].Radius = radius;
-            rocksList[rock].points = points;
             rocksList[rock].size = size;
             rocksList[rock].Spawn(position, Core.VelocityFromAngleZ(speed));
         }
@@ -162,7 +172,7 @@ namespace Asteroids2020
             }
 
             SpawnRocks(Vector3.Zero, GameLogic.RockSize.Large, largeRockAmount);
-            GameLogic.instance.Wave++;
+            Main.instance.Wave++;
         }
 
         #endregion
