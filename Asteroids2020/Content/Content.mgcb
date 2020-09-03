@@ -768,11 +768,29 @@
 /processorParam:Quality=Best
 /build:Sounds/BonusShip.wav
 
+#begin Sounds/ExtraShip.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/ExtraShip.wav
+
+#begin Sounds/LargeRockExpode.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/LargeRockExpode.wav
+
 #begin Sounds/Player Thrust.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Player Thrust.wav
+
+#begin Sounds/PlayerExplode.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/PlayerExplode.wav
 
 #begin Sounds/PlayerExplosion.wav
 /importer:WavImporter
@@ -803,6 +821,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/UFOExplosion.wav
+
+#begin Sounds/UFOFire.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/UFOFire.wav
 
 #begin Sounds/UFOLarge.wav
 /importer:WavImporter

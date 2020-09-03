@@ -51,7 +51,7 @@ namespace Asteroids2020
             rocksModels[1].rock = modelLoader.ReadVectorModelFile("RockTwo");
             rocksModels[2].rock = modelLoader.ReadVectorModelFile("RockThree");
             rocksModels[3].rock = modelLoader.ReadVectorModelFile("RockFour");
-            explodeSound = Core.LoadSoundEffect("RockExplosion");
+            explodeSound = Core.LoadSoundEffect("LargeRockExpode");
         }
 
         public void BeginRun()
@@ -69,7 +69,23 @@ namespace Asteroids2020
         #region Public Methods
         public void RockDistroyed(Rock rockHit)
         {
-            explodeSound.Play(0.5f, 0, 0);
+            float valume = 1;
+
+            if (Main.instance.CurrentMode == GameState.InPlay)
+            {
+                switch(rockHit.size)
+                {
+                    case GameLogic.RockSize.Large:
+                        explodeSound.Play(valume, 0, 0);
+                        break;
+                    case GameLogic.RockSize.Medium:
+                        explodeSound.Play(valume, 0.5f, 0);
+                        break;
+                    case GameLogic.RockSize.Small:
+                        explodeSound.Play(valume, 0.75f, 0);
+                        break;
+                }
+            }
 
             switch (rockHit.size)
             {

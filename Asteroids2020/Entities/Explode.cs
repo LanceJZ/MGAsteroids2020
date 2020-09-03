@@ -16,10 +16,16 @@ namespace Asteroids2020.Entities
         Vector3[] dotVerts;
         List<Dot> dotsList = new List<Dot>();
         Color color = Color.White;
+        float speed;
+        float maxlife;
+        float minlife;
         #endregion
         #region Properties
         public Vector3[] DotVerts { set => dotVerts = value; }
         public Color Color { set => color = value; }
+        public float Speed { set => speed = value; }
+        public float Maxlife { set => maxlife = value; }
+        public float Minlife { set => minlife = value; }
         #endregion
         #region Constructor
         public Explode(Game game, Camera camera) : base(game)
@@ -75,7 +81,9 @@ namespace Asteroids2020.Entities
                     dotsList.Last().InitializePoints(dotVerts, color);
                 }
 
-
+                Vector3 velocity = new Vector3(Core.RandomMinMax(-speed, speed),
+                    Core.RandomMinMax(-speed, speed), 0);
+                dotsList[dot].Spawn(Position, velocity, Core.RandomMinMax(minlife, maxlife));
             }
         }
         #endregion

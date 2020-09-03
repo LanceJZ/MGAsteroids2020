@@ -43,7 +43,10 @@ namespace Asteroids2020.Entities
         public void BeginRun()
         {
             explosion.AddAsChildOf(PO);
-
+            explosion.Color = new Color(100, 100, 166);
+            explosion.Speed = 4.666f;
+            explosion.Maxlife = 0.8f;
+            explosion.Minlife = 0.25f;
         }
         #endregion
         #region Update
@@ -120,6 +123,7 @@ namespace Asteroids2020.Entities
         {
             Enabled = false;
             Main.instance.TheRocks.RockDistroyed(this);
+            explosion.Spawn(Core.RandomMinMax(20, 40));
         }
         #endregion
     }

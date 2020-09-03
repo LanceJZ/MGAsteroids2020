@@ -62,7 +62,7 @@ namespace Asteroids2020.Entities
         {
             base.LoadContent();
             LoadVectorModel("UFO", color);
-            shotSound = Core.LoadSoundEffect("UFOShot");
+            shotSound = Core.LoadSoundEffect("UFOFire");
             explodeSound = Core.LoadSoundEffect("UFOExplosion");
             engineLSound = Core.LoadSoundEffectInstance("UFOLarge");
             engineSSound = Core.LoadSoundEffectInstance("UFOSmall");
@@ -71,7 +71,11 @@ namespace Asteroids2020.Entities
 
         public void BeginRun()
         {
-
+            explosion.AddAsChildOf(PO);
+            explosion.Color = new Color(100, 100, 180);
+            explosion.Speed = 4.7666f;
+            explosion.Maxlife = 0.9f;
+            explosion.Minlife = 0.5f;
         }
         #endregion
         #region Update
@@ -85,7 +89,7 @@ namespace Asteroids2020.Entities
 
                 if (PO.OffScreenSide())
                 {
-                    Destroyed();
+                    Reset();
                 }
 
                 if (vectorTimer.Elapsed)
@@ -102,20 +106,23 @@ namespace Asteroids2020.Entities
 
                 CheckCollusion();
 
-                switch(type)
+                if (Main.instance.CurrentMode == GameState.InPlay)
                 {
-                    case GameLogic.UFOType.Large:
-                        if (engineLSound.State != SoundState.Playing)
-                        {
-                            engineLSound.Play();
-                        }
-                        break;
-                    case GameLogic.UFOType.Small:
-                        if (engineSSound.State != SoundState.Playing)
-                        {
-                            engineSSound.Play();
-                        }
-                        break;
+                    switch (type)
+                    {
+                        case GameLogic.UFOType.Large:
+                            if (engineLSound.State != SoundState.Playing)
+                            {
+                                engineLSound.Play();
+                            }
+                            break;
+                        case GameLogic.UFOType.Small:
+                            if (engineSSound.State != SoundState.Playing)
+                            {
+                                engineSSound.Play();
+                            }
+                            break;
+                    }
                 }
             }
         }
@@ -140,11 +147,16 @@ namespace Asteroids2020.Entities
 
         public void Explode()
         {
-            explodeSound.Play();
-            Destroyed();
+            if (Main.instance.CurrentMode == GameState.InPlay)
+            {
+                explodeSound.Play();
+            }
+
+            explosion.Spawn(Core.RandomMinMax(15, 35));
+            Reset();
         }
 
-        public void Destroyed()
+        public void Reset()
         {
             Main.instance.TheUFO.ResetTimer();
             Enabled = false;
@@ -226,8 +238,13 @@ namespace Asteroids2020.Entities
 
             if (!shot.Enabled)
             {
+                if (Main.instance.CurrentMode == GameState.InPlay)
+                {
+                    shotSound.Play();
+                }
+
                 shot.Spawn(Position + Core.VelocityFromAngleZ(angle, PO.Radius),
-                    Core.VelocityFromAngleZ(angle, shotSpeed), 1.45f);
+                Core.VelocityFromAngleZ(angle, shotSpeed), 1.45f);
             }
         }
 

@@ -107,6 +107,7 @@ namespace Asteroids2020
 
             FileIO modelLoader = new FileIO(Game);
             dotVerts = modelLoader.ReadVectorModelFile("Dot");
+            bonusSound = Core.LoadSoundEffect("ExtraShip");
         }
 
         public void BeginRun()
@@ -140,10 +141,11 @@ namespace Asteroids2020
 
             if (_gameMode == GameState.PlayerHit)
             {
-                if (CheckPlayerClear())
+                if (CheckPlayerClear() && ThePlayer.CheckDoneExploding())
                 {
                     _gameMode = GameState.InPlay;
                     ThePlayer.Spawn(Vector3.Zero);
+                    TheUFO.TheUFO.Reset();
                 }
             }
         }
@@ -270,7 +272,7 @@ namespace Asteroids2020
             PositionedObject clearCircle = new PositionedObject(Game);
             clearCircle.Radius = Core.ScreenHeight / 2.5f;
 
-            TheUFO.TheUFO.Destroyed();
+            TheUFO.TheUFO.Reset();
 
             if (TheUFO.TheUFO.Shot.PO.CirclesIntersect(clearCircle))
             {

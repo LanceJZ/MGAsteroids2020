@@ -46,6 +46,7 @@ namespace Asteroids2020
         public void BeginRun()
         {
             ResetTimer();
+            theUFO.BeginRun();
         }
         #endregion
         #region Update
@@ -57,7 +58,7 @@ namespace Asteroids2020
             {
                 ResetTimer();
 
-                if (!theUFO.Enabled)
+                if (!theUFO.Enabled && Main.instance.CurrentMode != GameState.PlayerHit)
                 {
                     Spawn();
                 }

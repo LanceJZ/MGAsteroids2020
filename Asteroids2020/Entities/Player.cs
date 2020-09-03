@@ -12,7 +12,8 @@ namespace Asteroids2020.Entities
     public class Player : VectorModel
     {
         #region Fields
-        List<Shot> shots = new List<Shot>();
+        List<Shot> shotList = new List<Shot>();
+        List<Line> lineList = new List<Line>();
         Vector3[] dotVerts;
         Camera cameraRef;
         VectorModel flame;
@@ -26,7 +27,7 @@ namespace Asteroids2020.Entities
         float maxVelocity = 42.666f;
         #endregion
         #region Properties
-        public List<Shot> Shots { get => shots; }
+        public List<Shot> Shots { get => shotList; }
         public Color Color { get => color; }
         public Vector3[] DotVerts { set => dotVerts = value; }
         #endregion
@@ -39,7 +40,7 @@ namespace Asteroids2020.Entities
 
             for (int i = 0; i < 4; i++)
             {
-                shots.Add(new Shot(game, camera));
+                shotList.Add(new Shot(game, camera));
             }
         }
         #endregion
@@ -57,7 +58,7 @@ namespace Asteroids2020.Entities
             flame.LoadVectorModel("PlayerFlame", color);
             fireSound = Core.LoadSoundEffect("PlayerFire");
             thrustSound = Core.LoadSoundEffectInstance("Player Thrust");
-            explodeSound = Core.LoadSoundEffect("PlayerExplosion");
+            explodeSound = Core.LoadSoundEffect("PlayerExplode");
             FileIO modelLoader = new FileIO(Game);
         }
 
@@ -67,7 +68,7 @@ namespace Asteroids2020.Entities
             flame.Enabled = false;
             Enabled = false;
 
-            foreach (Shot shot in shots)
+            foreach (Shot shot in shotList)
             {
                 shot.InitializePoints(dotVerts, Color.White);
             }
@@ -77,23 +78,35 @@ namespace Asteroids2020.Entities
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            
-            if (Enabled)
-            {
-                Position = Core.WrapSideToSide(Core.WrapTopBottom(Position, Core.ScreenHeight), Core.ScreenWidth);
-                GetKeys();
-            }
+
+            Position = Core.WrapSideToSide(Core.WrapTopBottom(Position, Core.ScreenHeight), Core.ScreenWidth);
+            GetKeys();
         }
         #endregion
         #region Public Methods
         public new void Hit()
         {
             explodeSound.Play();
+            SpawnExplosion();
+            Main.instance.TheUFO.TheUFO.Reset();
             flame.Enabled = false;
             Position = Vector3.Zero;
             Velocity = Vector3.Zero;
             Acceleration = Vector3.Zero;
             Enabled = false;
+        }
+
+        public bool CheckDoneExploding()
+        {
+            foreach (Line line in lineList)
+            {
+                if (line.Enabled)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
         #endregion
         #region Private Methods
@@ -178,7 +191,7 @@ namespace Asteroids2020.Entities
             Vector3 dir = Core.VelocityFromAngleZ(Rotation.Z, 26.66f);
             Vector3 offset = Core.VelocityFromAngleZ(Rotation.Z, PO.Radius);
 
-            foreach (Shot shot in shots)
+            foreach (Shot shot in shotList)
             {
                 if (!shot.Enabled)
                 {
@@ -186,6 +199,43 @@ namespace Asteroids2020.Entities
                     shot.Spawn(Position + offset, dir + (Velocity * 0.75f), 1.25f);
                     break;
                 }
+            }
+        }
+
+        void SpawnExplosion()
+        {
+            int count = Core.RandomMinMax(6, 8);
+            float speed = 0.15f;
+
+            for (int c = 0; c < count; c++)
+            {
+                bool spawnDot = true;
+                int line = lineList.Count;
+
+                for (int i = 0; i > line; line++)
+                {
+                    if (!lineList[i].Enabled)
+                    {
+                        line = i;
+                        spawnDot = false;
+                        break;
+                    }
+                }
+
+                if (spawnDot)
+                {
+                    lineList.Add(new Line(Game, cameraRef));
+                    lineList.Last().BeginRun();
+                }
+
+                float life = Core.RandomMinMax(1.1f, 3.5f);
+                Vector3 offset = new Vector3(Core.RandomMinMax(-0.666f, 0.666f),
+                    Core.RandomMinMax(-0.666f, 0.666f), 0);
+                Vector3 rotation = new Vector3(0, 0, Core.RandomMinMax(0.1f, MathHelper.Pi));
+                Vector3 rotationVelocity = new Vector3(0, 0, Core.RandomMinMax(-0.5f, 0.5f));
+                Vector3 velocity = new Vector3(Core.RandomMinMax(-speed, speed),
+                    Core.RandomMinMax(-speed, speed), 0);
+                lineList[line].Spawn(Position + offset, rotation, rotationVelocity, velocity, life);
             }
         }
         #endregion
