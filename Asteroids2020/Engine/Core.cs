@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Panther
 {
@@ -109,6 +110,40 @@ namespace Panther
             }
 
             System.Diagnostics.Debug.WriteLine("The Texture File " + textureFileName + " was not found.");
+            return null;
+        }
+
+        public static SoundEffect LoadSoundEffect(string soundFileName)
+        {
+            if (soundFileName != "")
+            {
+                if (File.Exists("Content/Sounds/" + soundFileName + ".xnb"))
+                {
+                    return _game.Content.Load<SoundEffect>("Sounds/" + soundFileName);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("The Texture File " + soundFileName + " was not found.");
+                }
+            }
+
+            return null;
+        }
+
+        public static SoundEffectInstance LoadSoundEffectInstance(string soundFileName)
+        {
+            if (soundFileName != "")
+            {
+                if (File.Exists("Content/Sounds/" + soundFileName + ".xnb"))
+                {
+                    return _game.Content.Load<SoundEffect>("Sounds/" + soundFileName).CreateInstance();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("The Texture File " + soundFileName + " was not found.");
+                }
+            }
+
             return null;
         }
 

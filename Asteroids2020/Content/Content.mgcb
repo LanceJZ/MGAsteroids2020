@@ -756,3 +756,69 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/Core/Z.obj
 
+#begin Sounds/AsteroidsBackground.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/AsteroidsBackground.ogg
+
+#begin Sounds/BonusShip.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/BonusShip.wav
+
+#begin Sounds/Player Thrust.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Player Thrust.wav
+
+#begin Sounds/PlayerExplosion.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/PlayerExplosion.wav
+
+#begin Sounds/PlayerFire.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/PlayerFire.wav
+
+#begin Sounds/RockExplosion.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/RockExplosion.wav
+
+#begin Sounds/Thrust.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Thrust.wav
+
+#begin Sounds/UFOExplosion.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/UFOExplosion.wav
+
+#begin Sounds/UFOLarge.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/UFOLarge.wav
+
+#begin Sounds/UFOShot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/UFOShot.wav
+
+#begin Sounds/UFOSmall.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/UFOSmall.wav
+

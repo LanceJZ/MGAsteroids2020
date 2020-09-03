@@ -77,7 +77,7 @@ namespace Panther
             _effect.DirectionalLight0.Direction = _lightDirection;
             _effect.DiffuseColor = _diffuseColor;
             _effect.EmissiveColor = _emissiveColor;
-            _world = Matrix.CreateScale(TheScale) * RotateMatrix(Rotation) * Matrix.CreateTranslation(Position);
+            _world = Matrix.CreateScale(Scale) * RotateMatrix(Rotation) * Matrix.CreateTranslation(Position);
 
             if (_PO.Child)
             {

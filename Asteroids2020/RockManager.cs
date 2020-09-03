@@ -7,7 +7,6 @@ using System.Linq;
 using System;
 using Panther;
 using Asteroids2020.Entities;
-using Asteroids2020.Engine;
 
 namespace Asteroids2020
 {
@@ -19,20 +18,22 @@ namespace Asteroids2020
     public class RockManager : GameComponent
     {
         #region Fields
-        Camera CameraRef;
+        Camera cameraRef;
         RockModel[] rocksModels = new RockModel[4];
+        Vector3[] dotVerts;
         List<Rock> rocksList = new List<Rock>();
+        SoundEffect explodeSound;
         Color color = new Color(150, 150, 255);
         int largeRockAmount;
         #endregion
         #region Properties
         public List<Rock> Rocks { get => rocksList; }
+        public Vector3[] DotVerts { set => dotVerts = value; }
         #endregion
         #region Constructor
         public RockManager(Game game, Camera camera) : base(game)
         {
-            CameraRef = camera;
-
+            cameraRef = camera;
             game.Components.Add(this);
         }
         #endregion
@@ -40,7 +41,6 @@ namespace Asteroids2020
         public override void Initialize()
         {
             base.Initialize();
-
         }
 
         public void LoadContent()
@@ -51,6 +51,7 @@ namespace Asteroids2020
             rocksModels[1].rock = modelLoader.ReadVectorModelFile("RockTwo");
             rocksModels[2].rock = modelLoader.ReadVectorModelFile("RockThree");
             rocksModels[3].rock = modelLoader.ReadVectorModelFile("RockFour");
+            explodeSound = Core.LoadSoundEffect("RockExplosion");
         }
 
         public void BeginRun()
@@ -68,6 +69,8 @@ namespace Asteroids2020
         #region Public Methods
         public void RockDistroyed(Rock rockHit)
         {
+            explodeSound.Play(0.5f, 0, 0);
+
             switch (rockHit.size)
             {
                 case GameLogic.RockSize.Large:
@@ -127,39 +130,38 @@ namespace Asteroids2020
 
                 if (spawnNewRock)
                 {
-                    rocksList.Add(new Rock(Game, CameraRef));
-                    rocksList.Last().baseRadius =
-                        rocksList[rock].InitializePoints(rocksModels[Core.RandomMinMax(0, 3)].rock, color);
+                    rocksList.Add(new Rock(Game, cameraRef));
+                    rocksList[rock].InitializePoints(rocksModels[Core.RandomMinMax(0, 3)].rock, color);
+                    rocksList.Last().DotVerts = dotVerts; // For explosion.
+                    rocksList.Last().BeginRun();
                 }
 
                 float maxSpeed = 10.666f;
-                float baseRadius = rocksList[rock].baseRadius;
 
                 switch (rockSize)
                 {
                     case GameLogic.RockSize.Large:
                         position.Y = Core.RandomMinMax(-Core.ScreenHeight, Core.ScreenHeight);
                         position.X = Core.ScreenWidth;
-                        SpawnRock(rock, 1, baseRadius, 20, position,
+                        SpawnRock(rock, 1, 20, position,
                             Core.RandomMinMax(maxSpeed / 10, maxSpeed / 3), GameLogic.RockSize.Large);
                         break;
                     case GameLogic.RockSize.Medium:
-                        SpawnRock(rock, 0.5f, baseRadius * 0.5f, 50, position,
+                        SpawnRock(rock, 0.5f, 50, position,
                             Core.RandomMinMax(maxSpeed / 10, maxSpeed / 2), GameLogic.RockSize.Medium);
                         break;
                     case GameLogic.RockSize.Small:
-                        SpawnRock(rock, 0.25f, baseRadius * 0.25f, 100, position,
+                        SpawnRock(rock, 0.25f, 100, position,
                             Core.RandomMinMax(maxSpeed / 10, maxSpeed), GameLogic.RockSize.Small);
                         break;
                 }
             }
         }
 
-        void SpawnRock(int rock, float scale, float radius, int points,
+        void SpawnRock(int rock, float scale, int points,
             Vector3 position, float speed, GameLogic.RockSize size)
         {
             rocksList[rock].Scale = scale;
-            rocksList[rock].Radius = radius;
             rocksList[rock].size = size;
             rocksList[rock].Spawn(position, Core.VelocityFromAngleZ(speed));
         }

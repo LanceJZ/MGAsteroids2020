@@ -12,25 +12,26 @@ namespace Asteroids2020.Entities
     public class Rock : VectorModel
     {
         #region Fields
-        Camera CameraRef;
+        Explode explosion;
+        Camera cameraRef;
         public GameLogic.RockSize size = new GameLogic.RockSize();
         public float baseRadius;
         #endregion
         #region Properties
         public float Radius { get => PO.Radius; set => PO.Radius = value; }
+        public Vector3[] DotVerts { set => explosion.DotVerts = value; }
         #endregion
         #region Constructor
         public Rock(Game game, Camera camera) : base(game, camera)
         {
-            CameraRef = camera;
-
+            cameraRef = camera;
+            explosion = new Explode(game, camera);
         }
         #endregion
         #region Initialize-Load-BeginRun
         public override void Initialize()
         {
             base.Initialize();
-
         }
 
         protected override void LoadContent()
@@ -41,6 +42,7 @@ namespace Asteroids2020.Entities
 
         public void BeginRun()
         {
+            explosion.AddAsChildOf(PO);
 
         }
         #endregion
@@ -69,28 +71,28 @@ namespace Asteroids2020.Entities
                 if (PO.CirclesIntersect(shot.PO))
                 {
                     shot.Enabled = false;
-                    Destroyed();
+                    Explode();
                     PlayerScored();
                 }
             }
 
             if (PO.CirclesIntersect(player.PO))
             {
-                Destroyed();
+                Explode();
                 PlayerScored();
                 Main.instance.PlayerHit();
             }
 
             if (PO.CirclesIntersect(ufo.PO))
             {
-                ufo.Destroyed();
-                Destroyed();
+                ufo.Explode();
+                Explode();
             }
 
             if (PO.CirclesIntersect(ufo.Shot.PO))
             {
                 ufo.Shot.Enabled = false;
-                Destroyed();
+                Explode();
             }
         }
 
@@ -114,7 +116,7 @@ namespace Asteroids2020.Entities
             Main.instance.PlayerScore(points);
         }
 
-        void Destroyed()
+        void Explode()
         {
             Enabled = false;
             Main.instance.TheRocks.RockDistroyed(this);

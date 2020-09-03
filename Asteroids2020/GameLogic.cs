@@ -32,10 +32,12 @@ namespace Asteroids2020
         SpriteFont hyper20Font;
         SpriteFont hyper16Font;
         SpriteFont hyper8Font;
+        SoundEffect bonusSound;
         string scoreText;
         string highScoreText;
         string copyRightText = "(c) 1979 Atari inc"; //©
         string gameOverText = "Game Over";
+        Vector3[] dotVerts;
         Vector2 scorePosition = new Vector2();
         Vector2 highScorePosition = new Vector2();
         Vector2 copyPosition = new Vector2();
@@ -102,10 +104,16 @@ namespace Asteroids2020
             hyper20Font = Game.Content.Load<SpriteFont>("Hyperspace20");
             hyper16Font = Game.Content.Load<SpriteFont>("Hyperspace16");
             hyper8Font = Game.Content.Load<SpriteFont>("Hyperspace8");
+
+            FileIO modelLoader = new FileIO(Game);
+            dotVerts = modelLoader.ReadVectorModelFile("Dot");
         }
 
         public void BeginRun()
         {
+            rockManager.DotVerts = dotVerts;
+            ufoManager.DotVerts = dotVerts;
+            player.DotVerts = dotVerts;
             player.BeginRun();
             rockManager.BeginRun();
             ufoManager.BeginRun();
@@ -164,6 +172,7 @@ namespace Asteroids2020
 
             if (score > bonusLifeScore)
             {
+                bonusSound.Play();
                 lives++;
                 bonusLifeScore += bonusLifeAmount;
                 PlayerShipDesplay();

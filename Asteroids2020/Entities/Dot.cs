@@ -9,34 +9,33 @@ using Panther;
 
 namespace Asteroids2020.Entities
 {
-    public class Shot : VectorModel
+    public class Dot : VectorModel
     {
         #region Fields
         Camera cameraRef;
-        Timer life;
+        Timer lifeTimer;
         #endregion
         #region Properties
 
         #endregion
         #region Constructor
-        public Shot(Game game, Camera camera) : base(game, camera)
+        public Dot(Game game, Camera camera) : base(game, camera)
         {
             cameraRef = camera;
-            life = new Timer(game);
+            lifeTimer = new Timer(game);
         }
         #endregion
         #region Initialize-Load-BeginRun
         public override void Initialize()
         {
             base.Initialize();
-            Enabled = false;
-            LoadContent();
+
         }
 
         protected override void LoadContent()
         {
             base.LoadContent();
-            PO.Radius = LoadVectorModel("Dot");
+
         }
 
         public void BeginRun()
@@ -49,22 +48,17 @@ namespace Asteroids2020.Entities
         {
             base.Update(gameTime);
 
-            if (Enabled)
+            if (lifeTimer.Elapsed)
             {
-                Position = Core.WrapSideToSide(Core.WrapTopBottom(Position, Core.ScreenHeight), Core.ScreenWidth);
-
-                if (life.Elapsed)
-                {
-                    Enabled = false;
-                }
+                Enabled = false;
             }
         }
         #endregion
         #region Public Methods
-        public void Spawn(Vector3 position, Vector3 velocity, float timer)
+        public void Spawn(Vector3 position, Vector3 velocity, float life)
         {
-            Spawn(position, velocity);
-            life.Reset(timer);
+            base.Spawn(position, velocity);
+            lifeTimer.Reset(life);
         }
         #endregion
         #region Private Methods

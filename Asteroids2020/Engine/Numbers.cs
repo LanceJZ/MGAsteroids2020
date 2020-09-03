@@ -158,7 +158,7 @@ namespace Panther
             ModelEntity digit = new ModelEntity(Game, TheCamera, NumberModels[number]);
 
             digit.Moveable = false;
-            digit.TheScale = new Vector3(Scale);
+            digit.Scale = Scale;
             digit.PO.AddAsChildOf(this);
 
             return digit;

@@ -13,18 +13,19 @@ namespace Asteroids2020
     public class UFOManager : GameComponent
     {
         #region Fields
-        Camera CameraRef;
+        Camera cameraRef;
         UFO theUFO;
         Timer spawnTimer;
         uint spawnCount;
         #endregion
         #region Properties
         public UFO TheUFO { get => theUFO; }
+        public Vector3[] DotVerts { set => theUFO.DotVerts = value; }
         #endregion
         #region Constructor
         public UFOManager(Game game, Camera camera) : base(game)
         {
-            CameraRef = camera;
+            cameraRef = camera;
             theUFO = new UFO(game, camera);
             spawnTimer = new Timer(game);
 
@@ -35,7 +36,6 @@ namespace Asteroids2020
         public override void Initialize()
         {
             base.Initialize();
-
         }
 
         public void LoadContent()
@@ -86,13 +86,11 @@ namespace Asteroids2020
             {
                 theUFO.type = GameLogic.UFOType.Large;
                 theUFO.Scale = 1;
-                theUFO.PO.Radius = theUFO.LargeRadius;
             }
             else
             {
                 theUFO.type = GameLogic.UFOType.Small;
                 theUFO.Scale = 0.5f;
-                theUFO.PO.Radius = theUFO.LargeRadius / 2;
             }
 
             position.Y = Core.RandomMinMax(-Core.ScreenHeight * 0.25f, Core.ScreenHeight * 0.25f);

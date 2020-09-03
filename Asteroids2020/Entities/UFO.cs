@@ -13,26 +13,31 @@ namespace Asteroids2020.Entities
     {
         #region Fields
         Shot shot;
-        Camera CameraRef;
+        Explode explosion;
+        Camera cameraRef;
         Color color = new Color(175, 175, 255);
         Timer fireTimer;
         Timer vectorTimer;
-        float largeRadius;
+        SoundEffect shotSound;
+        SoundEffect explodeSound;
+        SoundEffectInstance engineLSound;
+        SoundEffectInstance engineSSound;
         float speed =  2.666f;
         float shotSpeed = 16.666f;
         public GameLogic.UFOType type;
         #endregion
         #region Properties
-        public float LargeRadius { get => largeRadius; }
         public Shot Shot { get => shot; }
+        public Vector3[] DotVerts { set => explosion.DotVerts = value; }
         #endregion
         #region Constructor
         public UFO(Game game, Camera camera) : base(game, camera)
         {
             shot = new Shot(game, camera);
-            CameraRef = camera;
+            cameraRef = camera;
             fireTimer = new Timer(game);
             vectorTimer = new Timer(game);
+            explosion = new Explode(game, camera);
         }
         #endregion
         #region Initialize-Load-BeginRun
@@ -56,7 +61,12 @@ namespace Asteroids2020.Entities
         public void LoadAssets()
         {
             base.LoadContent();
-            largeRadius = LoadVectorModel("UFO", color);
+            LoadVectorModel("UFO", color);
+            shotSound = Core.LoadSoundEffect("UFOShot");
+            explodeSound = Core.LoadSoundEffect("UFOExplosion");
+            engineLSound = Core.LoadSoundEffectInstance("UFOLarge");
+            engineSSound = Core.LoadSoundEffectInstance("UFOSmall");
+            shot.LoadVectorModel("Dot"); //convert to DotVerts.
         }
 
         public void BeginRun()
@@ -91,6 +101,22 @@ namespace Asteroids2020.Entities
                 }
 
                 CheckCollusion();
+
+                switch(type)
+                {
+                    case GameLogic.UFOType.Large:
+                        if (engineLSound.State != SoundState.Playing)
+                        {
+                            engineLSound.Play();
+                        }
+                        break;
+                    case GameLogic.UFOType.Small:
+                        if (engineSSound.State != SoundState.Playing)
+                        {
+                            engineSSound.Play();
+                        }
+                        break;
+                }
             }
         }
         #endregion
@@ -110,7 +136,12 @@ namespace Asteroids2020.Entities
 
             fireTimer.Reset();
             vectorTimer.Reset();
+        }
 
+        public void Explode()
+        {
+            explodeSound.Play();
+            Destroyed();
         }
 
         public void Destroyed()
@@ -128,14 +159,14 @@ namespace Asteroids2020.Entities
             {
                 if (PO.CirclesIntersect(shot.PO))
                 {
-                    Destroyed();
+                    Explode();
                     PlayerScored();
                 }
             }
 
             if (PO.CirclesIntersect(player.PO))
             {
-                Destroyed();
+                Explode();
                 PlayerScored();
                 Main.instance.PlayerHit();
             }

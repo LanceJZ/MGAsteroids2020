@@ -29,6 +29,7 @@ namespace Panther
         float _scalePercent = 1;
         float _gameRefScale = 1;
         float _radius = 0;
+        bool _newSpawn;
         bool _hit;
         bool _explosionActive;
         bool _isPaused;
@@ -139,7 +140,7 @@ namespace Panther
         /// <summary>
         /// Used for circle collusion. Sets radius of circle.
         /// </summary>
-        public float Radius { get => _radius; set => _radius = value; }
+        public float Radius { get => _radius * _scalePercent; set => _radius = value; }
         /// <summary>
         /// Enabled means this class is a parent, and has at least one child.
         /// </summary>
@@ -207,6 +208,7 @@ namespace Panther
         public float X { get => Position.X; set => Position.X = value; }
         public float Y { get => Position.Y; set => Position.Y = value; }
         public float Z { get => Position.Z; set => Position.Z = value; }
+        public bool NewSpawn { get => _newSpawn; set => _newSpawn = value; }
         #endregion
         #region Constructor
         /// <summary>

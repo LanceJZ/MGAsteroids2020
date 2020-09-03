@@ -13,9 +13,13 @@ namespace Asteroids2020.Entities
     {
         #region Fields
         List<Shot> shots = new List<Shot>();
-        Camera CameraRef;
+        Vector3[] dotVerts;
+        Camera cameraRef;
         VectorModel flame;
         Timer flameTimer;
+        SoundEffect fireSound;
+        SoundEffectInstance thrustSound;
+        SoundEffect explodeSound;
         Color color = new Color(175, 175, 255);
         float thrustAmount = 2.666f;
         float deceleration = 0.2666f;
@@ -24,11 +28,12 @@ namespace Asteroids2020.Entities
         #region Properties
         public List<Shot> Shots { get => shots; }
         public Color Color { get => color; }
+        public Vector3[] DotVerts { set => dotVerts = value; }
         #endregion
         #region Constructor
         public Player(Game game, Camera camera) : base(game, camera)
         {
-            CameraRef = camera;
+            cameraRef = camera;
             flame = new VectorModel(game, camera);
             flameTimer = new Timer(game, 0.015f);
 
@@ -48,8 +53,12 @@ namespace Asteroids2020.Entities
         public void LoadAssets()
         {
             base.LoadContent();
-            PO.Radius = LoadVectorModel("PlayerShip", color);
+            LoadVectorModel("PlayerShip", color);
             flame.LoadVectorModel("PlayerFlame", color);
+            fireSound = Core.LoadSoundEffect("PlayerFire");
+            thrustSound = Core.LoadSoundEffectInstance("Player Thrust");
+            explodeSound = Core.LoadSoundEffect("PlayerExplosion");
+            FileIO modelLoader = new FileIO(Game);
         }
 
         public void BeginRun()
@@ -57,6 +66,11 @@ namespace Asteroids2020.Entities
             flame.PO.AddAsChildOf(PO);
             flame.Enabled = false;
             Enabled = false;
+
+            foreach (Shot shot in shots)
+            {
+                shot.InitializePoints(dotVerts, Color.White);
+            }
         }
         #endregion
         #region Update
@@ -74,6 +88,7 @@ namespace Asteroids2020.Entities
         #region Public Methods
         public new void Hit()
         {
+            explodeSound.Play();
             flame.Enabled = false;
             Position = Vector3.Zero;
             Velocity = Vector3.Zero;
@@ -123,6 +138,11 @@ namespace Asteroids2020.Entities
         {
             if (Math.Abs(Velocity.X) + Math.Abs(Velocity.Y) < maxVelocity)
             {
+                if (thrustSound.State != SoundState.Playing)
+                {
+                    thrustSound.Play();
+                }
+
                 Acceleration = Core.VelocityFromAngleZ(Rotation.Z, thrustAmount);
             }
             else
@@ -162,6 +182,7 @@ namespace Asteroids2020.Entities
             {
                 if (!shot.Enabled)
                 {
+                    fireSound.Play(0.5f, 0, 0);
                     shot.Spawn(Position + offset, dir + (Velocity * 0.75f), 1.25f);
                     break;
                 }

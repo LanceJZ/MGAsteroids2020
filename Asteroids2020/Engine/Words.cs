@@ -176,7 +176,7 @@ namespace Panther
         {
             ModelEntity letterModel = new ModelEntity(Game, TheCamera, WordXNAModels[letter]);
             letterModel.Moveable = false;
-            letterModel.TheScale = new Vector3(Scale);
+            letterModel.Scale = Scale;
 
             return letterModel;
         }

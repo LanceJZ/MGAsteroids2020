@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
-using Asteroids2020.Engine;
 #endregion
 
 namespace Panther
@@ -70,6 +69,21 @@ namespace Panther
             }
         }
 
+        public void Transform()
+        {
+            // Calculate the mesh transformation by combining translation, rotation, and scaling
+            localMatrix = Matrix.CreateScale(Scale) *
+                Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z)
+                * Matrix.CreateTranslation(Position);
+            // Apply to Effect
+            Effect.World = localMatrix;
+            Effect.View = _camera.View;
+            Effect.Projection = _camera.Projection;
+            Effect.EmissiveColor = EmissiveColor;
+            Effect.DiffuseColor = DiffuseColor;
+            Effect.Alpha = Alpha;
+        }
+
         public override void Spawn(Vector3 position)
         {
             base.Spawn(position);
@@ -94,21 +108,6 @@ namespace Panther
             Transform();
         }
 
-        public void Transform()
-        {
-            // Calculate the mesh transformation by combining translation, rotation, and scaling
-            localMatrix = Matrix.CreateScale(Scale) *
-                Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z)
-                * Matrix.CreateTranslation(Position);
-            // Apply to Effect
-            Effect.World = localMatrix;
-            Effect.View = _camera.View;
-            Effect.Projection = _camera.Projection;
-            Effect.EmissiveColor = EmissiveColor;
-            Effect.DiffuseColor = DiffuseColor;
-            Effect.Alpha = Alpha;
-        }
-
         public float LoadVectorModel(string name, Color color)
         {
             return InitializePoints(modelFile.ReadVectorModelFile(name), color);
@@ -122,7 +121,6 @@ namespace Panther
         public float InitializePoints(Vector3[] pointPositions, Color color)
         {
             vertexArray = pointPositions;
-            float radius = 0;
 
             if (pointPositions != null)
             {
@@ -153,14 +151,14 @@ namespace Panther
 
             for (int i = 0; i < pointPositions.Length; i++)
             {
-                if (Math.Abs(pointPositions[i].X) > radius)
-                    radius = Math.Abs(pointPositions[i].X);
+                if (Math.Abs(pointPositions[i].X) > PO.Radius)
+                    PO.Radius = Math.Abs(pointPositions[i].X);
 
-                if (Math.Abs(pointPositions[i].Y) > radius)
-                    radius = Math.Abs(pointPositions[i].Y);
+                if (Math.Abs(pointPositions[i].Y) > PO.Radius)
+                    PO.Radius = Math.Abs(pointPositions[i].Y);
             }
 
-            return radius;
+            return PO.Radius;
         }
         /// <summary>
         /// Initializes the effect (loading, parameter setting, and technique selection)

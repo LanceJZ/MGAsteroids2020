@@ -213,7 +213,7 @@ namespace Panther
         {
             if (_model != null && _boneTransforms != null)
             {
-                _model.Root.Transform = Matrix.CreateScale(TheScale) *
+                _model.Root.Transform = Matrix.CreateScale(Scale) *
                     RotateMatrix(Rotation) * Matrix.CreateTranslation(Position);
 
                 if (_PO.Child)
