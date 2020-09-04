@@ -50,6 +50,67 @@ namespace Panther
         }
         #endregion
         #region Public Methods
+        public bool DoesFileExist(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        /// <summary>
+        /// Returns string of data from file. Filename must include path and extension.
+        /// </summary>
+        /// <param name="fileName">path + filename + extension.</param>
+        /// <returns>Data as string.</returns>
+        public string ReadStringFile(string fileName)
+        {
+            string data = "";
+            
+            if (DoesFileExist(fileName))
+            {
+                fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                byte[] dataByte = new byte[1024];
+                UTF8Encoding bufferUTF8 = new UTF8Encoding(true);
+
+                while (fileStream.Read(dataByte, 0, dataByte.Length) > 0)
+                {
+                    data += bufferUTF8.GetString(dataByte, 0, dataByte.Length);
+                }
+
+                Close();
+            }
+
+            return data;
+        }
+        /// <summary>
+        /// Sales data into file. Filename needs to include path and extension.
+        /// String converted into byte array outside of function.
+        /// UTF8Encoding(true).GetBytes(data);
+        /// </summary>
+        /// <param name="fileName">path + name of file + extension</param>
+        /// <param name="data">Data to be saved as a byte array.</param>
+        public void WriteStringFile(string fileName, byte[] data)
+        {
+            fileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
+
+            fileStream.Write(data, 0, data.Length);
+            Close();
+        }
+        /// <summary>
+        /// Sales data into file. Filename needs to include path and extension.
+        /// </summary>
+        /// <param name="fileName">path + name of file + extension</param>
+        /// <param name="data">Data to be saved.</param>
+        public void WriteStringFile(string fileName, string data)
+        {
+            fileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
+
+            byte[] databytes = new UTF8Encoding(true).GetBytes(data);
+            fileStream.Write(databytes, 0, databytes.Length);
+            Close();
+        }
         /// <summary>
         /// Write array of vertices for Vector Model.
         /// </summary>

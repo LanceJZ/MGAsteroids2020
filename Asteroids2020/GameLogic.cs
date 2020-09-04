@@ -23,11 +23,11 @@ namespace Asteroids2020
     public class GameLogic : GameComponent
     {
         Camera _camera;
-        GameState _gameMode = GameState.Over;
         VectorModel cross;
         Player player;
         RockManager rockManager;
         UFOManager ufoManager;
+        FileIO fileIO;
         List<VectorModel> playerShipModels = new List<VectorModel>();
         SpriteFont hyper20Font;
         SpriteFont hyper16Font;
@@ -42,6 +42,7 @@ namespace Asteroids2020
         Vector2 highScorePosition = new Vector2();
         Vector2 copyPosition = new Vector2();
         Vector2 gameoverPosition = new Vector2();
+        GameState _gameMode = GameState.Over;
         uint score = 0;
         uint highScore = 0;
         uint bonusLifeAmount = 10000;
@@ -77,6 +78,8 @@ namespace Asteroids2020
             player = new Player(game, camera);
             rockManager = new RockManager(game, camera);
             ufoManager = new UFOManager(game, camera);
+
+            fileIO = new FileIO(game);
 
             game.Components.Add(this);
         }
@@ -120,7 +123,8 @@ namespace Asteroids2020
             ufoManager.BeginRun();
             cross.Enabled = false;
             highScoreText = "00";
-            highScorePosition.X = Core.WindowWidth / 2 - hyper16Font.MeasureString(highScoreText).X;
+            LoadHighScore();
+            HighScoreChanged();
             copyPosition = new Vector2(Core.WindowWidth / 2 - hyper8Font.MeasureString(copyRightText).X / 2,
                 Core.WindowHeight - 20);
             gameoverPosition = new Vector2(Core.WindowWidth / 2 - hyper20Font.MeasureString(gameOverText).X / 2,
@@ -193,8 +197,8 @@ namespace Asteroids2020
                 if (score > highScore)
                 {
                     highScore = score;
-                    highScoreText = highScore.ToString();
-                    highScorePosition.X = Core.WindowWidth / 2 - hyper16Font.MeasureString(highScoreText).X;
+                    HighScoreChanged();
+                    SaveHighScore();
                 }
 
                 return;
@@ -267,6 +271,12 @@ namespace Asteroids2020
         }
         #endregion
         #region Private Methods
+        void HighScoreChanged()
+        {
+            highScoreText = highScore.ToString();
+            highScorePosition.X = Core.WindowWidth / 2 - hyper16Font.MeasureString(highScoreText).X;
+        }
+
         bool CheckPlayerClear()
         {
             PositionedObject clearCircle = new PositionedObject(Game);
@@ -352,6 +362,19 @@ namespace Asteroids2020
             scoreText = "00";
             float textlength = hyper20Font.MeasureString(scoreText).X;
             scorePosition.X = 320 - textlength;
+        }
+
+        void SaveHighScore()
+        {
+            fileIO.WriteStringFile("Score.sav", highScore.ToString());
+        }
+
+        void LoadHighScore()
+        {
+            if (fileIO.DoesFileExist("Score.sav"))
+            {
+                highScore = uint.Parse(fileIO.ReadStringFile("Score.sav"));
+            }
         }
         #endregion
     }
