@@ -40,7 +40,7 @@ namespace Asteroids2020.Entities
 
         public void BeginRun()
         {
-            float size = Core.RandomMinMax(0.0666f, 0.1666f);
+            float size = Core.RandomMinMax(0.1666f, 0.1666f);
             Vector3[] lineVerts = new Vector3[2];
             lineVerts[0] = new Vector3(-size, 0, 0);
             lineVerts[1] = new Vector3(size, 0, 0);

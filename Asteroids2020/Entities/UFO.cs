@@ -22,9 +22,10 @@ namespace Asteroids2020.Entities
         SoundEffect explodeSound;
         SoundEffectInstance engineLSound;
         SoundEffectInstance engineSSound;
+        public GameLogic.UFOType type;
         float speed =  2.666f;
         float shotSpeed = 16.666f;
-        public GameLogic.UFOType type;
+        public bool explodeFX = true;
         #endregion
         #region Properties
         public Shot Shot { get => shot; }
@@ -132,6 +133,16 @@ namespace Asteroids2020.Entities
         {
             base.Spawn(position);
 
+            switch (type)
+            {
+                case GameLogic.UFOType.Large:
+                    speed = 2.666f;
+                    break;
+                case GameLogic.UFOType.Small:
+                    speed = 3.666f;
+                    break;
+            }
+
             if (X < 0)
             {
                 PO.Velocity.X = speed;
@@ -152,8 +163,12 @@ namespace Asteroids2020.Entities
                 explodeSound.Play();
             }
 
-            explosion.Spawn(Core.RandomMinMax(15, 35));
             Reset();
+
+            if (explodeFX)
+            {
+                explosion.Spawn(Core.RandomMinMax(15, 35));
+            }
         }
 
         public void Reset()
@@ -190,7 +205,7 @@ namespace Asteroids2020.Entities
             }
         }
 
-        void ResetFireTimer()
+        public void ResetFireTimer()
         {
             fireTimer.Reset(2.75f);
         }

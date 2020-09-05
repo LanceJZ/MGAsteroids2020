@@ -816,6 +816,12 @@
 /processorParam:Quality=Best
 /build:Sounds/Thrust.wav
 
+#begin Sounds/Thrust2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Thrust2.wav
+
 #begin Sounds/UFOExplosion.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

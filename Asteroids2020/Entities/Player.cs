@@ -57,9 +57,9 @@ namespace Asteroids2020.Entities
             LoadVectorModel("PlayerShip", color);
             flame.LoadVectorModel("PlayerFlame", color);
             fireSound = Core.LoadSoundEffect("PlayerFire");
-            thrustSound = Core.LoadSoundEffectInstance("Player Thrust");
+            thrustSound = Core.LoadSoundEffectInstance("Thrust2");
             explodeSound = Core.LoadSoundEffect("PlayerExplode");
-            FileIO modelLoader = new FileIO(Game);
+            FileIO fileIO = new FileIO();
         }
 
         public void BeginRun()
@@ -176,7 +176,7 @@ namespace Asteroids2020.Entities
         void ThrustOff()
         {
             Acceleration = -Velocity * deceleration;
-            //Acceleration = Vector3.Zero;
+            thrustSound.Stop();
             flame.Enabled = false;
         }
         void HyperSpace()
@@ -195,7 +195,7 @@ namespace Asteroids2020.Entities
             {
                 if (!shot.Enabled)
                 {
-                    fireSound.Play(0.5f, 0, 0);
+                    fireSound.Play(0.25f, 0, 0);
                     shot.Spawn(Position + offset, dir + (Velocity * 0.75f), 1.25f);
                     break;
                 }
@@ -205,7 +205,7 @@ namespace Asteroids2020.Entities
         void SpawnExplosion()
         {
             int count = Core.RandomMinMax(6, 8);
-            float speed = 0.15f;
+            float speed = 0.05f;
 
             for (int c = 0; c < count; c++)
             {
@@ -229,10 +229,10 @@ namespace Asteroids2020.Entities
                 }
 
                 float life = Core.RandomMinMax(1.1f, 3.5f);
-                Vector3 offset = new Vector3(Core.RandomMinMax(-0.666f, 0.666f),
-                    Core.RandomMinMax(-0.666f, 0.666f), 0);
+                Vector3 offset = new Vector3(Core.RandomMinMax(-0.8666f, 0.8666f),
+                    Core.RandomMinMax(-0.8666f, 0.8666f), 0);
                 Vector3 rotation = new Vector3(0, 0, Core.RandomMinMax(0.1f, MathHelper.Pi));
-                Vector3 rotationVelocity = new Vector3(0, 0, Core.RandomMinMax(-0.5f, 0.5f));
+                Vector3 rotationVelocity = new Vector3(0, 0, Core.RandomMinMax(-1.15f, 1.15f));
                 Vector3 velocity = new Vector3(Core.RandomMinMax(-speed, speed),
                     Core.RandomMinMax(-speed, speed), 0);
                 lineList[line].Spawn(Position + offset, rotation, rotationVelocity, velocity, life);

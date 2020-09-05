@@ -12,7 +12,7 @@ namespace Panther
     public class VectorModel : Entity
     {
         Camera theCamera;
-        FileIO modelFile;
+        FileIO fileIO;
         Matrix localMatrix;
         VertexPositionColor[] pointList;
         Vector3[] vertexArray;
@@ -26,7 +26,7 @@ namespace Panther
         public VectorModel (Game game, Camera camera): base(game, camera)
         {
             theCamera = camera;
-            modelFile = new FileIO(game);
+            fileIO = new FileIO();
         }
 
         public override void Initialize()
@@ -110,12 +110,12 @@ namespace Panther
 
         public float LoadVectorModel(string name, Color color)
         {
-            return InitializePoints(modelFile.ReadVectorModelFile(name), color);
+            return InitializePoints(fileIO.ReadVectorModelFile(name), color);
         }
 
         public float LoadVectorModel(string name)
         {
-            return InitializePoints(modelFile.ReadVectorModelFile(name), Color.White);
+            return InitializePoints(fileIO.ReadVectorModelFile(name), Color.White);
         }
 
         public float InitializePoints(Vector3[] pointPositions, Color color)

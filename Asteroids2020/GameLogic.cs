@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using Panther;
 using Asteroids2020.Entities;
+using System.ComponentModel;
 
 public enum GameState
 {
@@ -18,6 +19,12 @@ public enum GameState
     MainMenu
 };
 
+public struct HighScore
+{
+    public uint score;
+    public string name;
+}
+
 namespace Asteroids2020
 {
     public class GameLogic : GameComponent
@@ -27,28 +34,41 @@ namespace Asteroids2020
         Player player;
         RockManager rockManager;
         UFOManager ufoManager;
+        Timer highScoreListTimer;
         FileIO fileIO;
         List<VectorModel> playerShipModels = new List<VectorModel>();
+        HighScore[] highScoreArray = new HighScore[10];
         SpriteFont hyper20Font;
         SpriteFont hyper16Font;
         SpriteFont hyper8Font;
         SoundEffect bonusSound;
-        string scoreText;
-        string highScoreText;
-        string copyRightText = "(c) 1979 Atari inc"; //©
-        string gameOverText = "Game Over";
         Vector3[] dotVerts;
         Vector2 scorePosition = new Vector2();
         Vector2 highScorePosition = new Vector2();
+        Vector2 highScoreListPosition = new Vector2();
+        Vector2 highScoreInstructionsPosition = new Vector2();
+        Vector2 highScoreLettersPosition = new Vector2();
         Vector2 copyPosition = new Vector2();
         Vector2 gameoverPosition = new Vector2();
         GameState _gameMode = GameState.Over;
+        string scoreText;
+        string highScoreText;
+        string newHighScoreEntryText = "";
+        string highScoresText = "High Scores";
+        string[] highScoreInstructions = new string[4];
+        string copyRightText = "(c) 1979 Atari inc"; //©
+        string gameOverText = "1 coin 1 play";
+        string fileNameHighScoreList = "HighScoreList.sav";
+        char[] highScoreSelectedLetters = new char[3];
         uint score = 0;
         uint highScore = 0;
         uint bonusLifeAmount = 10000;
         uint bonusLifeScore = 0;
-        int lives = 0;
         uint wave = 0;
+        int lives = 0;
+        int highScoreSelectedSpace;
+        int newHighScorePosition;
+        bool displayHighScoreList = true;
 
         public GameState CurrentMode { get => _gameMode; set => _gameMode = value; }
         public Player ThePlayer { get => player; }
@@ -79,7 +99,8 @@ namespace Asteroids2020
             rockManager = new RockManager(game, camera);
             ufoManager = new UFOManager(game, camera);
 
-            fileIO = new FileIO(game);
+            highScoreListTimer = new Timer(game);
+            fileIO = new FileIO();
 
             game.Components.Add(this);
         }
@@ -88,6 +109,10 @@ namespace Asteroids2020
         {
             base.Initialize();
 
+            highScoreInstructions[0] = "Your score is one of the ten best";
+            highScoreInstructions[1] = "Please enter your initials";
+            highScoreInstructions[2] = "Push rotate to select letter";
+            highScoreInstructions[3] = "Push hyperspace when letter is correct";
             float crossSize = 0.5f;
             Vector3[] crossVertex = { new Vector3(crossSize, 0, 0), new Vector3(-crossSize, 0, 0),
                 new Vector3(0, crossSize, 0), new Vector3(0, -crossSize, 0) };
@@ -108,8 +133,7 @@ namespace Asteroids2020
             hyper16Font = Game.Content.Load<SpriteFont>("Hyperspace16");
             hyper8Font = Game.Content.Load<SpriteFont>("Hyperspace8");
 
-            FileIO modelLoader = new FileIO(Game);
-            dotVerts = modelLoader.ReadVectorModelFile("Dot");
+            dotVerts = fileIO.ReadVectorModelFile("Dot");
             bonusSound = Core.LoadSoundEffect("ExtraShip");
         }
 
@@ -128,7 +152,11 @@ namespace Asteroids2020
             copyPosition = new Vector2(Core.WindowWidth / 2 - hyper8Font.MeasureString(copyRightText).X / 2,
                 Core.WindowHeight - 20);
             gameoverPosition = new Vector2(Core.WindowWidth / 2 - hyper20Font.MeasureString(gameOverText).X / 2,
-                Core.WindowHeight / 2 - hyper20Font.MeasureString(gameOverText).Y);
+                Core.WindowHeight / 1.25f);
+            highScoreListPosition = new Vector2(Core.WindowWidth / 2.75f, Core.WindowHeight / 4.25f);
+            highScoreInstructionsPosition = new Vector2(50, Core.WindowHeight / 4);
+            highScoreLettersPosition = new Vector2(Core.WindowWidth / 2.25f, Core.WindowHeight / 1.25f);
+            highScorePosition.Y = 10;
             ScoreZero();
         }
 
@@ -152,6 +180,46 @@ namespace Asteroids2020
                     TheUFO.TheUFO.Reset();
                 }
             }
+
+            if (_gameMode == GameState.HighScore)
+            {
+                NewHighScoreEntry();
+            }
+
+            if (_gameMode == GameState.Over  || _gameMode == GameState.HighScore)
+            {
+                if (highScoreListTimer.Elapsed)
+                {
+                    displayHighScoreList = !displayHighScoreList;
+                    highScoreListTimer.Reset(15);
+                }
+
+                if (displayHighScoreList)
+                {
+                    foreach (Rock rock in rockManager.Rocks)
+                    {
+                        rock.Visible = false;
+                        rock.explodeFX = false;
+                    }
+
+                    ufoManager.TheUFO.Visible = false;
+                    ufoManager.TheUFO.Shot.Visible = false;
+                    ufoManager.TheUFO.explodeFX = false;
+                    ufoManager.TheUFO.ResetFireTimer();
+                }
+                else
+                {
+                    foreach (Rock rock in rockManager.Rocks)
+                    {
+                        rock.Visible = true;
+                        rock.explodeFX = true;
+                    }
+
+                    ufoManager.TheUFO.Visible = true;
+                    ufoManager.TheUFO.Shot.Visible = true;
+                    ufoManager.TheUFO.explodeFX = true;
+                }
+            }
         }
 
         public void Draw()
@@ -163,7 +231,45 @@ namespace Asteroids2020
 
             if (_gameMode == GameState.Over)
             {
+                if (highScoreListTimer.Elapsed)
+                {
+                    displayHighScoreList = !displayHighScoreList;
+                    highScoreListTimer.Reset(15);
+                }
+
+                if (displayHighScoreList)
+                {
+                    Core.SpriteBatch.DrawString(hyper20Font, highScoresText,
+                        new Vector2(highScoreListPosition.X, highScoreListPosition.Y - 75), Color.White);
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Core.SpriteBatch.DrawString(hyper20Font, (1 + i).ToString(),
+                            new Vector2(highScoreListPosition.X, highScoreListPosition.Y + (i * 50)),
+                            Color.White);
+                        Core.SpriteBatch.DrawString(hyper20Font, highScoreArray[i].name,
+                            new Vector2(highScoreListPosition.X + 75, highScoreListPosition.Y + (i * 50)),
+                            Color.White);
+                        Core.SpriteBatch.DrawString(hyper20Font, highScoreArray[i].score.ToString(),
+                            new Vector2(highScoreListPosition.X + 225, highScoreListPosition.Y + (i * 50)),
+                            Color.White);
+                    }
+                }
+
                 Core.SpriteBatch.DrawString(hyper20Font, gameOverText, gameoverPosition, Color.White);
+            }
+
+            if (_gameMode == GameState.HighScore)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Core.SpriteBatch.DrawString(hyper20Font, highScoreInstructions[i],
+                        new Vector2(highScoreInstructionsPosition.X ,highScoreInstructionsPosition.Y + (i * 50)),
+                        Color.White);
+                }
+
+                Core.SpriteBatch.DrawString(hyper20Font, newHighScoreEntryText,
+                    highScoreLettersPosition, Color.White);
             }
 
             Core.SpriteBatch.End();
@@ -201,6 +307,8 @@ namespace Asteroids2020
                     SaveHighScore();
                 }
 
+                CheckForNewHighScore();
+
                 return;
             }
 
@@ -229,7 +337,7 @@ namespace Asteroids2020
                 }
             }
 
-            if (Core.KeyPressed(Keys.Enter) && !ThePlayer.Enabled)
+            if (Core.KeyPressed(Keys.Enter) && _gameMode == GameState.Over)
             {
                 ResetGame();
             }
@@ -271,6 +379,86 @@ namespace Asteroids2020
         }
         #endregion
         #region Private Methods
+        void NewHighScoreEntry()
+        {
+            if (Core.KeyPressed(Keys.Down))
+            {
+                highScoreSelectedSpace++;
+
+                if (highScoreSelectedSpace > 2)
+                {
+                    highScoreArray[newHighScorePosition].name = newHighScoreEntryText;
+                    highScoreArray[newHighScorePosition].score = score;
+                    _gameMode = GameState.Over;
+                    WriteHighScoreList();
+                }
+                else
+                {
+                    highScoreSelectedLetters[highScoreSelectedSpace] = (char)65;
+                }
+            }
+            else if (Core.KeyPressed(Keys.Left))
+            {
+                highScoreSelectedLetters[highScoreSelectedSpace]--;
+
+                if (highScoreSelectedLetters[highScoreSelectedSpace] < 65)
+                {
+                    highScoreSelectedLetters[highScoreSelectedSpace] = (char)90;
+                }
+            }
+            else if (Core.KeyPressed(Keys.Right))
+            {
+                highScoreSelectedLetters[highScoreSelectedSpace]++;
+
+                if (highScoreSelectedLetters[highScoreSelectedSpace] > 90)
+                {
+                    highScoreSelectedLetters[highScoreSelectedSpace] = (char)65;
+                }
+            }
+
+            newHighScoreEntryText = "";
+
+            foreach (char letter in highScoreSelectedLetters)
+            {
+                newHighScoreEntryText += letter;
+            }
+        }
+
+        void CheckForNewHighScore()
+        {
+            for (int rank = 0; rank < 10; rank++)
+            {
+                if (score > highScoreArray[rank].score)
+                {
+                    if (rank < 9)
+                    {
+                        HighScore[] oldScores = new HighScore[10];
+
+                        for (int oldRank = rank; oldRank < 10; oldRank++)
+                        {
+                            oldScores[oldRank].score = highScoreArray[oldRank].score;
+                            oldScores[oldRank].name = highScoreArray[oldRank].name;
+                        }
+
+                        for (int newRank = rank; newRank < 9; newRank++)
+                        {
+                            highScoreArray[newRank + 1].score = oldScores[newRank].score;
+                            highScoreArray[newRank + 1].name = oldScores[newRank].name;
+                        }
+                    }
+
+                    highScoreArray[rank].score = score;
+                    highScoreArray[rank].name = "AAA";
+                    _gameMode = GameState.HighScore;
+                    highScoreSelectedLetters = "___".ToCharArray();
+                    highScoreSelectedSpace = 0;
+                    newHighScorePosition = rank;
+                    highScoreSelectedLetters[highScoreSelectedSpace] = (char)65;
+                    break;
+                }
+            }
+        }
+
         void HighScoreChanged()
         {
             highScoreText = highScore.ToString();
@@ -355,6 +543,16 @@ namespace Asteroids2020
             ufoManager.Reset();
             rockManager.Reset();
             PlayerShipDesplay();
+
+            foreach (Rock rock in rockManager.Rocks)
+            {
+                rock.Visible = true;
+                rock.explodeFX = true;
+            }
+
+            ufoManager.TheUFO.Visible = true;
+            ufoManager.TheUFO.Shot.Visible = true;
+            ufoManager.TheUFO.explodeFX = true;
         }
 
         void ScoreZero()
@@ -375,7 +573,94 @@ namespace Asteroids2020
             {
                 highScore = uint.Parse(fileIO.ReadStringFile("Score.sav"));
             }
+
+            if (fileIO.DoesFileExist(fileNameHighScoreList))
+            {
+                // Read High Score List into array.
+                LoadandDecodeHighScores(fileNameHighScoreList);
+
+                foreach(HighScore high in highScoreArray)
+                {
+                    if (highScore < high.score)
+                    {
+                        highScore = high.score;
+                    }
+                }
+            }
+            else
+            {
+                MakeNewHighScoreList();
+                WriteHighScoreList();
+            }
         }
+
+        void MakeNewHighScoreList()
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                highScoreArray[i].name = "AAA";
+                highScoreArray[i].score = 1000;
+            }
+        }
+
+        void WriteHighScoreList()
+        {
+            fileIO.OpenForWrite(fileNameHighScoreList);
+
+            foreach(HighScore score in highScoreArray)
+            {
+                fileIO.WriteByteArray(fileIO.StringToByteArray(score.name));
+                fileIO.WriteByteArray(fileIO.StringToByteArray(score.score.ToString()));
+                fileIO.WriteByteArray(fileIO.StringToByteArray(":"));
+            }
+
+            fileIO.Close();
+        }
+
+
+        void LoadandDecodeHighScores(string fileName)
+        {
+            string scoreData = fileIO.ReadStringFile(fileName);
+
+            int list = 0;
+            int letter = 0;
+            bool isLetter = true;
+            string fromNumber = "";
+
+            foreach (char character in scoreData)
+            {
+                if (character.ToString() == "\0")
+                {
+                    break;
+                }
+
+                if (isLetter)
+                {
+                    letter++;
+                    highScoreArray[list].name += character;
+
+                    if (letter == 3)
+                        isLetter = false;
+                }
+                else
+                {
+                    if (character.ToString() == ":")
+                    {
+                        highScoreArray[list].score = uint.Parse(fromNumber);
+
+                        list++;
+                        letter = 0;
+                        fromNumber = "";
+                        isLetter = true;
+                    }
+                    else
+                    {
+                        fromNumber += character.ToString();
+                    }
+                }
+            }
+        }
+
         #endregion
     }
 }

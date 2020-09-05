@@ -16,6 +16,7 @@ namespace Asteroids2020.Entities
         Camera cameraRef;
         public GameLogic.RockSize size = new GameLogic.RockSize();
         public float baseRadius;
+        public bool explodeFX = true;
         #endregion
         #region Properties
         public float Radius { get => PO.Radius; set => PO.Radius = value; }
@@ -123,7 +124,11 @@ namespace Asteroids2020.Entities
         {
             Enabled = false;
             Main.instance.TheRocks.RockDistroyed(this);
-            explosion.Spawn(Core.RandomMinMax(20, 40));
+
+            if (explodeFX)
+            {
+                explosion.Spawn(Core.RandomMinMax(20, 40));
+            }
         }
         #endregion
     }

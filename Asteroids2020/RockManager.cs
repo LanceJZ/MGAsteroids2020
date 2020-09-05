@@ -45,12 +45,12 @@ namespace Asteroids2020
 
         public void LoadContent()
         {
-            FileIO modelLoader = new FileIO(Game);
+            FileIO fileIO = new FileIO();
 
-            rocksModels[0].rock = modelLoader.ReadVectorModelFile("RockOne");
-            rocksModels[1].rock = modelLoader.ReadVectorModelFile("RockTwo");
-            rocksModels[2].rock = modelLoader.ReadVectorModelFile("RockThree");
-            rocksModels[3].rock = modelLoader.ReadVectorModelFile("RockFour");
+            rocksModels[0].rock = fileIO.ReadVectorModelFile("RockOne");
+            rocksModels[1].rock = fileIO.ReadVectorModelFile("RockTwo");
+            rocksModels[2].rock = fileIO.ReadVectorModelFile("RockThree");
+            rocksModels[3].rock = fileIO.ReadVectorModelFile("RockFour");
             explodeSound = Core.LoadSoundEffect("LargeRockExpode");
         }
 

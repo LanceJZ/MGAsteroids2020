@@ -10,7 +10,7 @@ using System;
 
 namespace Panther
 {
-    class FileIO : GameComponent
+    class FileIO
     {
         #region Fields
         FileStream fileStream;
@@ -19,33 +19,8 @@ namespace Panther
 
         #endregion
         #region Constructor
-        public FileIO(Game game) : base(game)
+        public FileIO()
         {
-
-            game.Components.Add(this);
-        }
-        #endregion
-        #region Initialize-Load-BeginRun
-        public override void Initialize()
-        {
-            base.Initialize();
-
-        }
-
-        public void LoadContent()
-        {
-
-        }
-
-        public void BeginRun()
-        {
-
-        }
-        #endregion
-        #region Update
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
 
         }
         #endregion
@@ -83,6 +58,32 @@ namespace Panther
             }
 
             return data;
+        }
+        /// <summary>
+        /// Converts a string to a byte array for file access.
+        /// </summary>
+        /// <param name="dataString"></param>
+        /// <returns></returns>
+        public byte[] StringToByteArray(string dataString)
+        {
+            return new UTF8Encoding(true).GetBytes(dataString);
+        }
+        /// <summary>
+        /// Open for Write. Must be closed after done writing.
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void OpenForWrite(string fileName)
+        {
+            fileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
+        }
+        /// <summary>
+        /// Write a byte array, without close. Must be closed when all byte arrays are done.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="filename"></param>
+        public void WriteByteArray(byte[] data)
+        {
+            fileStream.Write(data, 0, data.Length);
         }
         /// <summary>
         /// Sales data into file. Filename needs to include path and extension.
@@ -254,7 +255,7 @@ namespace Panther
             return verts;
         }
 
-        void Close()
+        public void Close()
         {
             fileStream.Flush();
             fileStream.Close();
