@@ -72,6 +72,7 @@ namespace Asteroids2020
                 instance = _game;
             }
 
+            Window.Title = "Asteroids 2020 Version 1"; // Has to be in Initialize.
             // Setup lighting.
             Core.ScreenHeight = (uint)_graphics.PreferredBackBufferHeight;
             Core.ScreenWidth = (uint)_graphics.PreferredBackBufferWidth;

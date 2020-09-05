@@ -194,7 +194,7 @@ namespace Asteroids2020
                     highScoreListTimer.Reset(15);
                 }
 
-                if (displayHighScoreList)
+                if (displayHighScoreList || _gameMode == GameState.HighScore)
                 {
                     foreach (Rock rock in rockManager.Rocks)
                     {
