@@ -35,7 +35,7 @@ namespace Asteroids2020.Entities
             base.Initialize();
         }
 
-        protected override void LoadContent()
+        public new void LoadContent()
         {
             base.LoadContent();
 

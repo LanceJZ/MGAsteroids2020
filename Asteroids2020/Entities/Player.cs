@@ -51,7 +51,7 @@ namespace Asteroids2020.Entities
 
         }
 
-        public void LoadAssets()
+        public new void LoadContent()
         {
             base.LoadContent();
             LoadVectorModel("PlayerShip", color);

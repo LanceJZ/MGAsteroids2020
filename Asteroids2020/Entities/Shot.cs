@@ -36,7 +36,7 @@ namespace Asteroids2020.Entities
         protected override void LoadContent()
         {
             base.LoadContent();
-            PO.Radius = LoadVectorModel("Dot");
+            LoadVectorModel("Dot");
         }
 
         public void BeginRun()

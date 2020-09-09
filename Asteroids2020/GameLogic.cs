@@ -125,7 +125,7 @@ namespace Asteroids2020
 
         public void LoadContent()
         {
-            player.LoadAssets();
+            player.LoadContent();
             rockManager.LoadContent();
             ufoManager.LoadContent();
 

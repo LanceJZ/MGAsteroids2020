@@ -40,7 +40,7 @@ namespace Asteroids2020
 
         public void LoadContent()
         {
-            theUFO.LoadAssets();
+            theUFO.LoadContent();
         }
 
         public void BeginRun()

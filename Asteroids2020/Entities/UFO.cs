@@ -59,7 +59,7 @@ namespace Asteroids2020.Entities
         //0.164 is 0.437 - upper
         //0.466 is 1.189 - mid
         //0.188 is 0.501 - bottom
-        public void LoadAssets()
+        public new void LoadContent()
         {
             base.LoadContent();
             LoadVectorModel("UFO", color);
