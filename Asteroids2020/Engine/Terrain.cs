@@ -68,7 +68,7 @@ namespace Panther
 
             if (HeightMap == null)
             {
-                System.Diagnostics.Debug.WriteLine("HeightMap not loaded.");
+                Core.DebugConsole("HeightMap not loaded.");
                 return;
             }
 

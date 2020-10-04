@@ -72,7 +72,7 @@ namespace Asteroids2020.Entities
 
         public void BeginRun()
         {
-            explosion.AddAsChildOf(PO);
+            explosion.AddAsChildOf(PO, false, true);
             explosion.Color = new Color(100, 100, 180);
             explosion.Speed = 4.7666f;
             explosion.Maxlife = 0.9f;

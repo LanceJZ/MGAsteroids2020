@@ -44,7 +44,7 @@ namespace Asteroids2020.Entities
             Vector3[] lineVerts = new Vector3[2];
             lineVerts[0] = new Vector3(-size, 0, 0);
             lineVerts[1] = new Vector3(size, 0, 0);
-            InitializePoints(lineVerts, color);
+            InitializePoints(lineVerts, color, "Player Ship Explode Line");
         }
         #endregion
         #region Update

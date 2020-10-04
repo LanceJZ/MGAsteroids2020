@@ -29,7 +29,7 @@ namespace Asteroids2020
 {
     public class GameLogic : GameComponent
     {
-        Camera _camera;
+        Camera camera;
         VectorModel cross;
         Player player;
         RockManager rockManager;
@@ -90,9 +90,16 @@ namespace Asteroids2020
             Large
         }
 
-        public GameLogic(Game game, Camera camera) : base(game)
+        public GameLogic(Game game) : base(game)
         {
-            _camera = camera;
+            // Screen resolution is 1200 X 900.
+            // Y positive is Up.
+            // (X) positive is to the right when camera is at rotation zero.
+            // Z positive is towards the camera when at rotation zero.
+            // Rotation on object rotates CCW. Zero has front facing X positive.
+            // Pi/2 on Y faces Z negative.
+            camera = new Camera(game, new Vector3(0, 0, 50), new Vector3(0, MathHelper.Pi, 0),
+                Core.Graphics.Viewport.AspectRatio, 1f, 1000);
             cross = new VectorModel(Game, camera);
 
             player = new Player(game, camera);
@@ -108,6 +115,7 @@ namespace Asteroids2020
         public override void Initialize()
         {
             base.Initialize();
+            Game.Window.Title = "Asteroids 2020 Version 1.01"; // Has to be in Initialize.
 
             highScoreInstructions[0] = "Your score is one of the ten best";
             highScoreInstructions[1] = "Please enter your initials";
@@ -116,7 +124,7 @@ namespace Asteroids2020
             float crossSize = 0.5f;
             Vector3[] crossVertex = { new Vector3(crossSize, 0, 0), new Vector3(-crossSize, 0, 0),
                 new Vector3(0, crossSize, 0), new Vector3(0, -crossSize, 0) };
-            cross.InitializePoints(crossVertex, Color.White);
+            cross.InitializePoints(crossVertex, Color.White, "Cross");
 
             // The X: 27.63705 Y: -20.711943
             Core.ScreenWidth = 27.63705f;
@@ -513,8 +521,8 @@ namespace Asteroids2020
 
                 if (newShip)
                 {
-                    playerShipModels.Add(new VectorModel(Game, _camera));
-                    playerShipModels.Last().InitializePoints(ThePlayer.VertexArray, ThePlayer.Color);
+                    playerShipModels.Add(new VectorModel(Game, camera));
+                    playerShipModels.Last().InitializePoints(ThePlayer.VertexArray, ThePlayer.Color, "Player Ship");
                     playerShipModels.Last().PO.Rotation.Z = MathHelper.PiOver2;
                 }
             }

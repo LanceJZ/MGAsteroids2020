@@ -70,7 +70,7 @@ namespace Asteroids2020.Entities
 
             foreach (Shot shot in shotList)
             {
-                shot.InitializePoints(dotVerts, Color.White);
+                shot.InitializePoints(dotVerts, Color.White, "Player Shot");
             }
         }
         #endregion
@@ -170,7 +170,7 @@ namespace Asteroids2020.Entities
             }
 
             flame.PO.UpdateChild();
-            flame.Transform();
+            flame.UpdateMatrix();
         }
 
         void ThrustOff()

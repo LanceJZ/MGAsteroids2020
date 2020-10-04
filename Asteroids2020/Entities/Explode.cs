@@ -78,7 +78,7 @@ namespace Asteroids2020.Entities
                 if (spawnDot)
                 {
                     dotsList.Add(new Dot(Game, cameraRef));
-                    dotsList.Last().InitializePoints(dotVerts, color);
+                    dotsList.Last().InitializePoints(dotVerts, color, "Explode Dot");
                 }
 
                 Vector3 velocity = new Vector3(Core.RandomMinMax(-speed, speed),

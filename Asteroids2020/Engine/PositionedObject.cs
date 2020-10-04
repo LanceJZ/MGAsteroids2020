@@ -24,6 +24,7 @@ namespace Panther
         public Vector3 RotationVelocity = Vector3.Zero;
         public Vector3 RotationAcceleration = Vector3.Zero;
         Vector3 _childPosition;
+        Vector3 _orginalPosition;
         Vector2 _heightWidth;
         float _elapsedGameTime;
         float _scalePercent = 1;
@@ -39,6 +40,8 @@ namespace Panther
         bool _isParent;
         bool _isChild;
         bool _inDebugMode;
+        bool _rotationDependent;
+        bool _childUpdate;
         #endregion
         #region Properties
 
@@ -165,6 +168,8 @@ namespace Panther
         /// Enabled will move using velocity and acceleration.
         /// </summary>
         public bool Moveable { get => _isMoveable; set => _isMoveable = value; }
+
+        public bool ChildUpdate { get => _childUpdate; set => _childUpdate = value; }
         /// <summary>
         /// Enabled causes the class to update. If base of Sprite, enables sprite to be drawn.
         /// </summary>
@@ -183,6 +188,8 @@ namespace Panther
                 }
             }
         }
+
+        public Vector3 OriginalPosition { get => _orginalPosition; set => _orginalPosition = value; }
         /// <summary>
         /// Enabled the active bool will mirror that of the parent.
         /// </summary>
@@ -191,6 +198,8 @@ namespace Panther
         /// Enabled the position and rotation will always be the same as the parent.
         /// </summary>
         public bool DirectConnection { get => _isDirectConnected; set => _isDirectConnected = value; }
+
+        public bool RotationDependent { get => _rotationDependent; set => _rotationDependent = value; }
         /// <summary>
         /// Gets or sets the GameModel's AABB
         /// </summary>
@@ -259,7 +268,23 @@ namespace Panther
             if (DirectConnection)
             {
                 Position = ParentPO.Position;
-                Rotation = ParentPO.Rotation;
+
+                if (_rotationDependent)
+                {
+                    Rotation = ParentPO.Rotation;
+                }
+            }
+            else
+            {
+                if (_childUpdate)
+                {
+                    Position = _orginalPosition + ParentPO.Position;
+
+                    if (_rotationDependent)
+                    {
+                        Rotation = ParentPO.Rotation;
+                    }
+                }
             }
         }
 
@@ -286,22 +311,34 @@ namespace Panther
             return angle;
         }
         /// <summary>
+        /// Adds child that is not active dependent and directly connected.
+        /// </summary>
+        /// <param name="parrent">The Parent to this class.</param>
+        public virtual void AddAsChildOf(PositionedObject parrent)
+        {
+            AddAsChildOf(parrent, false, false, false, false);
+        }
+        /// <summary>
         /// Adds child that is directly connect.
         /// </summary>
         /// <param name="parrent">The parent to this class.</param>
         /// <param name="activeDependent">If this class is active when the parent is.</param>
         public virtual void AddAsChildOf(PositionedObject parrent, bool activeDependent)
         {
-            AddAsChildOf(parrent, activeDependent, true);
+            AddAsChildOf(parrent, activeDependent, false, false, false);
         }
         /// <summary>
-        /// Adds child that is not active dependent and directly connected.
+        /// Adds a child that is not child updated or rotation dependent.
         /// </summary>
-        /// <param name="parrent">The Parent to this class.</param>
-        public virtual void AddAsChildOf(PositionedObject parrent)
+        /// <param name="parrent">The parent to this class.</param>
+        /// <param name="activeDependent">If this class is active when the parent is.</param>
+        /// <param name="directConnection">If it is staying at child 0, 0, 0</param>
+        public virtual void AddAsChildOf(PositionedObject parrent, bool activeDependent,
+            bool directConnection)
         {
-            AddAsChildOf(parrent, false, true);
+            AddAsChildOf(parrent, activeDependent, directConnection, false, false);
         }
+
         /// <summary>
         /// Add PO class or base PO class from AModel or Sprite as child of this class.
         /// Make sure all the parents of the parent are added before the children.
@@ -310,14 +347,17 @@ namespace Panther
         /// <param name="activeDependent">If this class is active when the parent is.</param>
         /// <param name="directConnection">Bind Position and Rotation to child.</param>
         public virtual void AddAsChildOf(PositionedObject parent, bool activeDependent,
-            bool directConnection)
+            bool directConnection, bool rotationDependent, bool childUpdate)
         {
             if (ParentPO != null)
                 return;
 
             ActiveDependent = activeDependent;
             DirectConnection = directConnection;
+            RotationDependent = rotationDependent;
             Child = true;
+            ChildUpdate = childUpdate;
+
             ParentPO = parent;
             ParentPO.Parent = true;
             ParentPO.ChildrenPOs.Add(this);

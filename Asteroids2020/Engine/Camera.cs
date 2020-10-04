@@ -74,7 +74,7 @@ namespace Panther
             NeedViewResync = true;
         }
 
-        void UpdateLookAt()
+        public void UpdateLookAt()
         {
             Vector3 lookAtOffset = Vector3.Transform(BaseCameraReference, RotateMatrix(Rotation));
             LookAt = Position + lookAtOffset;

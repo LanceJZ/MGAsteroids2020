@@ -115,10 +115,17 @@ namespace Panther
             base.Draw(gameTime);
         }
         #endregion
+        #region Public
+        public bool CirclesIntersect(Entity target)
+        {
+            return PO.CirclesIntersect(target.PO);
+        }
+
         public Matrix RotateMatrix(Vector3 rotation)
         {
             return Matrix.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z);
         }
+        #endregion
         #region Spawn
         /// <summary>
         /// If position, rotation, rotation velocity and velocity are used.

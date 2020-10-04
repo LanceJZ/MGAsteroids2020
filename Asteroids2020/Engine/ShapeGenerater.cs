@@ -29,14 +29,16 @@ namespace Panther
         }
 
 
-        public ShapeGenerater(Game game, Camera camera, VertexPositionNormalTexture[] shape, int primitiveCount) : base(game, camera)
+        public ShapeGenerater(Game game, Camera camera, VertexPositionNormalTexture[] shape,
+            int primitiveCount) : base(game, camera)
         {
             _shape = shape;
             _primitiveCount = primitiveCount;
             Defaults();
         }
 
-        public ShapeGenerater(Game game, Camera camera, VertexPositionNormalTexture[] shape, int primitiveCount, Vector3 position) : base(game, camera)
+        public ShapeGenerater(Game game, Camera camera, VertexPositionNormalTexture[] shape,
+            int primitiveCount, Vector3 position) : base(game, camera)
         {
             _shape = shape;
             _primitiveCount = primitiveCount;

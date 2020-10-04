@@ -147,7 +147,7 @@ namespace Asteroids2020
                 if (spawnNewRock)
                 {
                     rocksList.Add(new Rock(Game, cameraRef));
-                    rocksList[rock].InitializePoints(rocksModels[Core.RandomMinMax(0, 3)].rock, color);
+                    rocksList[rock].InitializePoints(rocksModels[Core.RandomMinMax(0, 3)].rock, color, "Rock");
                     rocksList.Last().DotVerts = dotVerts; // For explosion.
                     rocksList.Last().BeginRun();
                 }

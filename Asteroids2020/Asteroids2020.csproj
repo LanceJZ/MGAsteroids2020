@@ -29,6 +29,12 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\CollisionBuddy\MatrixExtensions\MatrixExtensions.SharedProject.shproj" />
+    <None Include="Engine\CollisionBuddy\PrimitiveBuddy\PrimitiveBuddy.SharedProject.shproj" />
+    <None Include="Engine\CollisionBuddy\RandomExtensions\RandomExtensions.SharedProject.shproj" />
+    <None Include="Engine\CollisionBuddy\Vector2Extensions\Vector2Extensions.SharedProject.shproj" />
+  </ItemGroup>
+  <ItemGroup>
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
   </ItemGroup>
   <ItemGroup>

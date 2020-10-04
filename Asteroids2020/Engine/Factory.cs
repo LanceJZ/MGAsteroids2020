@@ -12,6 +12,7 @@ namespace Panther
     {
         Camera cameraRef;
         Game gameRef;
+        string name = "";
         public Factory(Game game, Camera camera)
         {
             cameraRef = camera;
@@ -98,7 +99,7 @@ namespace Panther
             if (makeNew)
             {
                 entities.Add(new VectorModel(gameRef, cameraRef));
-                entities.Last().PO.Radius = entities.Last().InitializePoints(verts, color);
+                entities.Last().PO.Radius = entities.Last().InitializePoints(verts, color, 1, name);
             }
 
             entities[entity].Spawn(position, volocity);

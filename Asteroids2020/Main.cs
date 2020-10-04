@@ -11,7 +11,6 @@ namespace Asteroids2020
         GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
         GameLogic _game;
-        Camera _camera;
 
         Timer _FPSTimer;
         Timer _FPSDesplayTimer;
@@ -34,23 +33,12 @@ namespace Asteroids2020
             _graphics.ApplyChanges();
             IsFixedTimeStep = true;
             Content.RootDirectory = "Content";
-            // Positive Y is Up. Positive X is Right.
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
             Core.Initialize(this, _graphics, _spriteBatch);
-
-            // Screen resolution is 1200 X 900.
-            // Y positive is Up.
-            // (X) positive is to the right when camera is at rotation zero.
-            // Z positive is towards the camera when at rotation zero.
-            // Rotation on object rotates CCW. Zero has front facing X positive. Pi/2 on Y faces Z negative.
-            _camera = new Camera(this, new Vector3(0, 0, 50), new Vector3(0, MathHelper.Pi, 0),
-                GraphicsDevice.Viewport.AspectRatio, 1f, 60f);
-
             _FPSTimer = new Timer(this, 1);
             _FPSDesplayTimer = new Timer(this, 30);
-            _game = new GameLogic(this, _camera);
+            _game = new GameLogic(this);
         }
 
         private void SetMultiSampling(object sender, PreparingDeviceSettingsEventArgs eventArgs)
@@ -72,7 +60,6 @@ namespace Asteroids2020
                 instance = _game;
             }
 
-            Window.Title = "Asteroids 2020 Version 1"; // Has to be in Initialize.
             // Setup lighting.
             Core.ScreenHeight = (uint)_graphics.PreferredBackBufferHeight;
             Core.ScreenWidth = (uint)_graphics.PreferredBackBufferWidth;
