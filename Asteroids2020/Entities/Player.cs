@@ -235,7 +235,7 @@ namespace Asteroids2020.Entities
                 Vector3 rotationVelocity = new Vector3(0, 0, Core.RandomMinMax(-1.15f, 1.15f));
                 Vector3 velocity = new Vector3(Core.RandomMinMax(-speed, speed),
                     Core.RandomMinMax(-speed, speed), 0);
-                lineList[line].Spawn(Position + offset, rotation, rotationVelocity, velocity, life);
+                lineList[line].Spawn(Position + offset, velocity, rotation, rotationVelocity, life);
             }
         }
         #endregion

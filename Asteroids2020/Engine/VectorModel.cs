@@ -130,15 +130,16 @@ namespace Panther
             UpdateMatrix();
         }
 
-        public override void Spawn(Vector3 position, Vector3 rotation, Vector3 velocity)
+        public override void Spawn(Vector3 position, Vector3 velocity, Vector3 rotation)
         {
-            base.Spawn(position, rotation, velocity);
+            base.Spawn(position, velocity, rotation);
             UpdateMatrix();
         }
 
-        public override void Spawn(Vector3 position, Vector3 rotation, Vector3 rotationVelocity, Vector3 velocity)
+        public override void Spawn(Vector3 position, Vector3 velocity, Vector3 rotation,
+            Vector3 rotationVelocity)
         {
-            base.Spawn(position, rotation, rotationVelocity, velocity);
+            base.Spawn(position, velocity, rotation, rotationVelocity);
             UpdateMatrix();
         }
 

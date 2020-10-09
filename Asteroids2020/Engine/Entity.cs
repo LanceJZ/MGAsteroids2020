@@ -134,11 +134,17 @@ namespace Panther
         /// <param name="rotation">Rotation to spawn at.</param>
         /// <param name="rotationVelocity">Initial Rotation Velocity to spawn with.</param>
         /// <param name="velocity">Initial Velocity to spawn with.</param>
-        public virtual void Spawn(Vector3 position, Vector3 rotation, Vector3 rotationVelocity, Vector3 velocity)
+        public virtual void Spawn(Vector3 position, Vector3 velocity, Vector3 rotation,
+            Vector3 rotationVelocity)
         {
+            _PO.Position = position;
             _PO.Velocity = velocity;
+            _PO.Rotation = rotation;
             _PO.RotationVelocity = rotationVelocity;
-            Spawn(position, rotation);
+            Enabled = true;
+            Visible = true;
+            _PO.Hit = false;
+            _PO.NewSpawn = true;
         }
         /// <summary>
         /// If position, rotation and velocity are used.
@@ -146,10 +152,9 @@ namespace Panther
         /// <param name="position">Position to spawn at.</param>
         /// <param name="rotation">Rotation to spawn at.</param>
         /// <param name="velocity">Initial Velocity to spawn with.</param>
-        public virtual void Spawn(Vector3 position, Vector3 rotation, Vector3 velocity)
+        public virtual void Spawn(Vector3 position, Vector3 velocity, Vector3 rotation)
         {
-            _PO.Velocity = velocity;
-            Spawn(position, rotation);
+            Spawn(position, velocity, rotation, Vector3.Zero);
         }
         /// <summary>
         /// If only position and rotation are used.
@@ -158,8 +163,7 @@ namespace Panther
         /// <param name="rotation">Rotation to spawn at.</param>
         public virtual void Spawn(Vector3 position, Vector3 velocity)
         {
-            _PO.Velocity = velocity;
-            Spawn(position);
+            Spawn(position, velocity, Vector3.Zero);
         }
         /// <summary>
         /// If only position is used.
@@ -167,11 +171,7 @@ namespace Panther
         /// <param name="position">Position to spawn at.</param>
         public virtual void Spawn(Vector3 position)
         {
-            Enabled = true;
-            Visible = true;
-            _PO.Hit = false;
-            _PO.NewSpawn = true;
-            _PO.Position = position;
+            Spawn(position, Vector3.Zero);
         }
         #endregion
     }

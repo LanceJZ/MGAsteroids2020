@@ -58,6 +58,7 @@ namespace Panther
         public void Reset(float time)
         {
             Amount = time;
+            Reset();
         }
     }
 }

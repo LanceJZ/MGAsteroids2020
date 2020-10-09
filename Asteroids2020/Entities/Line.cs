@@ -59,10 +59,10 @@ namespace Asteroids2020.Entities
         }
         #endregion
         #region Public Methods
-        public void Spawn(Vector3 position, Vector3 rotation, Vector3 rotationVelocity,
-            Vector3 velocity, float life)
+        public void Spawn(Vector3 position, Vector3 velocity, Vector3 rotation,
+            Vector3 rotationVelocity, float life)
         {
-            base.Spawn(position, rotation, rotationVelocity, velocity);
+            base.Spawn(position, velocity, rotation, rotationVelocity);
             lifeTimer.Reset(life);
         }
         #endregion

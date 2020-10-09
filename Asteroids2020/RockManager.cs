@@ -96,20 +96,19 @@ namespace Asteroids2020
                     SpawnRocks(rockHit.Position, GameLogic.RockSize.Small, 2);
                     break;
                 case GameLogic.RockSize.Small:
-                    bool newWave = true;
+                    bool spawnWave = true;
 
                     foreach (Rock rock in rocksList)
                     {
                         if (rock.Enabled)
                         {
-                            newWave = false;
+                            spawnWave = false;
                         }
                     }
 
-                    if (newWave)
+                    if (spawnWave)
                     {
                         NewWaveSpawn();
-                        return;
                     }
                     break;
             }
