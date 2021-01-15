@@ -74,12 +74,14 @@ namespace Asteroids2020
         public void Reset()
         {
             theUFO.Enabled = false;
+            spawnCount = 0;
             ResetTimer();
         }
         #endregion
         #region Private Methods
         void Spawn()
         {
+            spawnCount++;
             float spawnPercent = (float)(Math.Pow(0.915, spawnCount / (Main.instance.Wave + 1)) * 100);
             Vector3 position = new Vector3();
 
