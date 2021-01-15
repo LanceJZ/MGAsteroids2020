@@ -28,7 +28,7 @@ namespace Asteroids2020.Entities
         #endregion
         #region Properties
         public List<Shot> Shots { get => shotList; }
-        public Color Color { get => color; }
+        public new Color Color { get => color; }
         public Vector3[] DotVerts { set => dotVerts = value; }
         #endregion
         #region Constructor
@@ -79,7 +79,8 @@ namespace Asteroids2020.Entities
         {
             base.Update(gameTime);
 
-            Position = Core.WrapSideToSide(Core.WrapTopBottom(Position, Core.ScreenHeight), Core.ScreenWidth);
+            Position = Core.WrapSideToSide(Core.WrapTopBottom(Position, Core.ScreenHeight),
+                Core.ScreenWidth);
             GetKeys();
         }
         #endregion

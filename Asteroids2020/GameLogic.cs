@@ -178,14 +178,14 @@ namespace Asteroids2020
             base.Update(gameTime);
 
             GetKeys();
-
+            //Change to switch, and move all to functions.
             if (_gameMode == GameState.PlayerHit)
             {
                 if (CheckPlayerClear() && ThePlayer.CheckDoneExploding())
                 {
                     _gameMode = GameState.InPlay;
                     ThePlayer.Spawn(Vector3.Zero);
-                    TheUFO.TheUFO.Reset();
+                    TheUFO.TheUFO.Reset(); //WTF?
                 }
             }
 

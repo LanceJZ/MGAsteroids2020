@@ -105,7 +105,7 @@ namespace Asteroids2020.Entities
                     Fire();
                 }
 
-                CheckCollusion();
+                CheckCollision();
 
                 if (Main.instance.CurrentMode == GameState.InPlay)
                 {
@@ -178,7 +178,7 @@ namespace Asteroids2020.Entities
         }
         #endregion
         #region Private Methods
-        void CheckCollusion()
+        void CheckCollision()
         {
             Player player = Main.instance.ThePlayer;
 
